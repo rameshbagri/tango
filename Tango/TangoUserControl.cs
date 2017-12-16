@@ -179,29 +179,26 @@ namespace Tango
             int WordCount = 0;
 
             Microsoft.Office.Interop.Word.Range rng1 = docs.Content;
-            Microsoft.Office.Interop.Word.Range rng2 = docs.Sentences[1];
 
             MessageBox.Show("AddSummary1");
             MessageBox.Show(findtext.Length.ToString());
 
             for (int fc = 0; fc < findtext.Length; fc++)
             {
-                {
-                    MessageBox.Show("Search Loop");
-                    rng1.Find.Execute(ref findtext[fc]);
-                    rng1.Find.ClearFormatting();
-                    rng1.Find.Forward = true;
-                }
+                MessageBox.Show("Search Loop");
+                rng1.Find.Execute(ref findtext[fc]);
+                rng1.Find.ClearFormatting();
+                rng1.Find.Forward = true;
                 while (rng1.Find.Found)
                 {
-                    {
-                        SentenceCount++;
-                        MessageBox.Show("Rng1 Found Sentence Count is : " + SentenceCount.ToString());
-                        rng2 = docs.Sentences[SentenceCount];
-                        rng2.Find.ClearFormatting();
-                        rng2.Find.Forward = true;
-                        rng2.Find.Execute(ref findtext[fc]);
-                    }
+                    MessageBox.Show(Cursor.ToString());
+                    SentenceCount++;
+                    MessageBox.Show("Rng1 Found Sentence Count is : " + SentenceCount.ToString());
+                    Microsoft.Office.Interop.Word.Selection rng2 = Globals.ThisAddIn.Application.Selection;
+                    rng2.Find.ClearFormatting();
+                    rng2.Select();
+                    rng2.Find.Forward = true;
+                    rng2.Find.Execute(ref findtext[fc]);
                     while (rng2.Find.Found && WordCount < 100)
                     {
                         MessageBox.Show("Rng2 Found Sentence Count is : " + SentenceCount.ToString());
