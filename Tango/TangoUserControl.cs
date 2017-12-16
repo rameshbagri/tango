@@ -54,6 +54,7 @@ namespace Tango
 
             txtBox.AppendText(AddSummary1(SrchItem));
             txtBox.AppendText(Environment.NewLine);
+
             
             //MessageBox.Show(txtBox.Text);
 
@@ -164,22 +165,53 @@ namespace Tango
 
         private string AddSummary1(object[] srchItem)
         {
-            MessageBox.Show("Addsummary1");
             string RetVal = "";
-            Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
-            string text = docs.Content.Text;
-            MessageBox.Show("string text = docs.Content.Text;");
-            string[] sentences = text.Split(new char[] { '.', '?', '!' });
-            MessageBox.Show("string[] sentences = text.Split(new char[] { '.', '?', '!' });");
-            string[] wordsToMatch = { "Sri Lanka", "Wicket" };
-            MessageBox.Show("wordsToMatch ");
-            var sentenceQuery = from sentence in sentences let w = sentence.Split(new char[] { '.', '?', '!', ' ', ';', ':', ',' }, StringSplitOptions.RemoveEmptyEntries) where w.Distinct().Intersect(wordsToMatch).Count() == wordsToMatch.Count() select sentence;
-            MessageBox.Show(sentenceQuery.ToString());
-            foreach (string str in sentenceQuery)
-            {
-                MessageBox.Show(str);
-            }
 
+            Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
+            Microsoft.Office.Interop.Word.Range rng = docs.Content;
+            rng.Find.ClearFormatting();
+
+            object[] findtext = srchItem;
+            
+            int scount = docs.Sentences.Count;
+
+            int SentenceCount = 0;
+            int WordCount = 0;
+
+            Microsoft.Office.Interop.Word.Range rng1 = docs.Content;
+            Microsoft.Office.Interop.Word.Range rng2 = docs.Sentences[1];
+
+            MessageBox.Show("AddSummary1");
+            MessageBox.Show(findtext.Length.ToString());
+
+            for (int fc = 0; fc < findtext.Length; fc++)
+            {
+                {
+                    MessageBox.Show("Search Loop");
+                    rng1.Find.Execute(ref findtext[fc]);
+                    rng1.Find.ClearFormatting();
+                    rng1.Find.Forward = true;
+                }
+                while (rng1.Find.Found)
+                {
+                    {
+                        SentenceCount++;
+                        MessageBox.Show("Rng1 Found Sentence Count is : " + SentenceCount.ToString());
+                        rng2 = docs.Sentences[SentenceCount];
+                        rng2.Find.ClearFormatting();
+                        rng2.Find.Forward = true;
+                        rng2.Find.Execute(ref findtext[fc]);
+                    }
+                    while (rng2.Find.Found && WordCount < 100)
+                    {
+                        MessageBox.Show("Rng2 Found Sentence Count is : " + SentenceCount.ToString());
+                        WordCount++;
+                    }
+                }
+                RetVal += findtext[fc].ToString() + Environment.NewLine;
+                RetVal += "Sentence Count : " + SentenceCount.ToString() + Environment.NewLine;
+                RetVal += "Word Count : " + WordCount.ToString() + Environment.NewLine + Environment.NewLine;
+            }
             return RetVal;
         }
 

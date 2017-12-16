@@ -44,6 +44,7 @@
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.pnlFunctionList.SuspendLayout();
@@ -129,6 +130,7 @@
             // 
             // HomePage
             // 
+            this.HomePage.Controls.Add(this.label1);
             this.HomePage.Controls.Add(this.btnProcess);
             this.HomePage.Controls.Add(this.checkBox6);
             this.HomePage.Controls.Add(this.checkBox5);
@@ -221,6 +223,16 @@
             this.checkBox1.Text = "Find / Replace";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 251);
+            this.label1.MinimumSize = new System.Drawing.Size(250, 100);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(250, 100);
+            this.label1.TabIndex = 28;
+            this.label1.Text = "label1";
+            // 
             // TangoUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -257,5 +269,6 @@
         private System.Windows.Forms.CheckBox checkBox3;
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Label label1;
     }
 }
