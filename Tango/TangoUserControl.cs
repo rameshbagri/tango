@@ -178,31 +178,33 @@ namespace Tango
             int SentenceCount = 0;
             int WordCount = 0;
 
-            Microsoft.Office.Interop.Word.Range rng1 = docs.Content;
-
-            MessageBox.Show("AddSummary1");
-            MessageBox.Show(findtext.Length.ToString());
-
             for (int fc = 0; fc < findtext.Length; fc++)
             {
-                MessageBox.Show("Search Loop");
-                rng1.Find.Execute(ref findtext[fc]);
-                rng1.Find.ClearFormatting();
-                rng1.Find.Forward = true;
-                while (rng1.Find.Found)
+                rng.Find.ClearFormatting();
+                rng.Find.Forward = true;
+                rng.Find.Execute(ref findtext[fc]);
+                SentenceCount = 0;
+                WordCount = 0;
+                MessageBox.Show("Find Text is : " + findtext[fc].ToString());
+
+                for (int i=1; i <= scount; i++)
                 {
-                    MessageBox.Show(Cursor.ToString());
-                    SentenceCount++;
-                    MessageBox.Show("Rng1 Found Sentence Count is : " + SentenceCount.ToString());
-                    Microsoft.Office.Interop.Word.Selection rng2 = Globals.ThisAddIn.Application.Selection;
-                    rng2.Find.ClearFormatting();
-                    rng2.Select();
-                    rng2.Find.Forward = true;
-                    rng2.Find.Execute(ref findtext[fc]);
-                    while (rng2.Find.Found && WordCount < 100)
+                    if(rng.Find.Found)
                     {
-                        MessageBox.Show("Rng2 Found Sentence Count is : " + SentenceCount.ToString());
-                        WordCount++;
+                        SentenceCount++;
+                        MessageBox.Show(findtext[fc].ToString() + " in Sentence Count is : " + SentenceCount.ToString());
+                        Microsoft.Office.Interop.Word.Range rng2 = docs.Sentences[i];
+                        
+                        rng2.Find.ClearFormatting();
+                        rng2.Find.Forward = true;
+                        rng2.Find.Execute(ref findtext[fc]);
+
+                        while (rng2.Find.Found && WordCount < 100)
+                        {
+                            MessageBox.Show(findtext[fc].ToString() + " String Count is : " + WordCount.ToString());
+                            WordCount++;
+                            rng2.Find.Execute(ref findtext[fc]);
+                        }
                     }
                 }
                 RetVal += findtext[fc].ToString() + Environment.NewLine;
