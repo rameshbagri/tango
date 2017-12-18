@@ -11,7 +11,7 @@ using Office = Microsoft.Office.Core;
 using Microsoft.Office.Tools.Word;
 using Microsoft.Office.Tools;
 using System.Windows.Forms;
-
+using word = Microsoft.Office.Interop.Word;
 
 namespace Tango
 {
@@ -64,7 +64,7 @@ namespace Tango
                 tp.Name = "Page1";
                 tp.Text = checkBox1.Text;
                 ((TabControl)CLB).Controls.Add(tp);
-                AddResult("Page1", "Page1_1", "Sri Lanka");
+                AddResult1("Page1", "Page1_1", SrchItem);
                 comboBox1.Items.Add(checkBox1.Text);
             }
             if (checkBox2.Checked)
@@ -74,7 +74,6 @@ namespace Tango
                 tp.Text = checkBox2.Text;
                 ((TabControl)CLB).Controls.Add(tp);
                 AddResult("Page2", "Page2_1", "Wicket");
-                txtBox.AppendText(AddSummary("Wicket"));
                 txtBox.AppendText(Environment.NewLine);
                 comboBox1.Items.Add(checkBox2.Text);
             }
@@ -114,55 +113,6 @@ namespace Tango
             tabControl1.SelectedIndex = 1;
         }
 
-        private string AddSummary(string SearText)
-        {
-            string RetVal = "";
-
-            Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
-            Microsoft.Office.Interop.Word.Range rng = docs.Content;
-            rng.Find.ClearFormatting();
-
-            object findtext = SearText;
-            int scount = docs.Sentences.Count;
-            int wcount = 0;
-
-            int SentenceCount = 0;
-            int WordCount = 0;
-
-            for (int i = 1; i <= scount; i++)
-            {
-                Microsoft.Office.Interop.Word.Range rng1 = docs.Sentences[i];
-                Microsoft.Office.Interop.Word.Range rng2 = docs.Sentences[i];
-
-                rng1.Find.ClearFormatting();
-                rng1.Find.Forward = true;
-                rng1.Find.Execute(ref findtext);
-                if (rng1.Find.Found)
-                {
-                    SentenceCount += 1;
-                    wcount = docs.Sentences[i].Words.Count;
-                    WordCount = 0;
-
-                    for (int i1 = 1; i1 <= wcount; i1++)
-                    {
-                        rng2 = docs.Sentences[i];
-                        rng2.Find.ClearFormatting();
-                        rng2.Find.Forward = true;
-                        rng2.Find.Execute(ref findtext);
-                        if (rng2.Find.Found)
-                        {
-                            WordCount += 1;
-                        }
-                    }
-                }
-            }
-            RetVal += SearText + Environment.NewLine;
-            RetVal += "Sentence Count : " + SentenceCount.ToString() + Environment.NewLine;
-            RetVal += "Word Count : " + SentenceCount.ToString() + Environment.NewLine + Environment.NewLine;
-
-            return RetVal;
-        }
-
         private string AddSummary1(object[] srchItem)
         {
             string RetVal = "";
@@ -171,97 +121,65 @@ namespace Tango
             Microsoft.Office.Interop.Word.Range rng = docs.Content;
             rng.Find.ClearFormatting();
 
-            object[] findtext = srchItem;
-            
             int scount = docs.Sentences.Count;
+            object[] findtext = srchItem;
+            int rng1count = 0;
 
-            int SentenceCount = 0;
-            int WordCount = 0;
-
-            for (int fc = 0; fc < findtext.Length; fc++)
+            for (int i = 0; i < findtext.Length; i++)
             {
-                rng.Find.ClearFormatting();
-                rng.Find.Forward = true;
-                rng.Find.Execute(ref findtext[fc]);
-                SentenceCount = 0;
-                WordCount = 0;
-                MessageBox.Show("Find Text is : " + findtext[fc].ToString());
-
-                for (int i=1; i <= scount; i++)
+                rng.Start = 0;
+                rng1count = 0;
+                rng.Find.Execute(ref findtext[i]);
+                while (rng.Find.Found)
                 {
-                    if(rng.Find.Found)
-                    {
-                        SentenceCount++;
-                        MessageBox.Show(findtext[fc].ToString() + " in Sentence Count is : " + SentenceCount.ToString());
-                        Microsoft.Office.Interop.Word.Range rng2 = docs.Sentences[i];
-                        
-                        rng2.Find.ClearFormatting();
-                        rng2.Find.Forward = true;
-                        rng2.Find.Execute(ref findtext[fc]);
-
-                        while (rng2.Find.Found && WordCount < 100)
-                        {
-                            MessageBox.Show(findtext[fc].ToString() + " String Count is : " + WordCount.ToString());
-                            WordCount++;
-                            rng2.Find.Execute(ref findtext[fc]);
-                        }
-                    }
+                    rng1count += 1;
+                    rng.Find.Execute(ref findtext[i]);
                 }
-                RetVal += findtext[fc].ToString() + Environment.NewLine;
-                RetVal += "Sentence Count : " + SentenceCount.ToString() + Environment.NewLine;
-                RetVal += "Word Count : " + WordCount.ToString() + Environment.NewLine + Environment.NewLine;
+                RetVal += findtext[i] + Environment.NewLine;
+                RetVal += "Word Count : " + rng1count.ToString() + Environment.NewLine + Environment.NewLine;
             }
             return RetVal;
         }
 
-        private string AddSummary1A(object[] srchItem)
+        private void AddResult1(string basePage, string addPage, object[] srchItem)
         {
-            string RetVal = "";
-            //MessageBox.Show(srchItem.Length.ToString());
+            Control Ctr = GetCtrl(basePage);
+            Control P = AddPanel(addPage, 0, 0, Ctr.Width - 2, Ctr.Height - 2);
+            Ctr.Controls.Add(P);
+
+            CheckedListBox CLB = new CheckedListBox();
+            CLB.Name = "CheckedListBox_" + basePage;
+            CLB.Top = 0;
+            CLB.Left = 0;
+            CLB.Height = (int)((double)(P.Height) * 0.8);
+            CLB.Width = (int)((double)(P.Width) * 0.98);
 
             Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
             Microsoft.Office.Interop.Word.Range rng = docs.Content;
             rng.Find.ClearFormatting();
-            
+
+            int scount = docs.Sentences.Count;
             object[] findtext = srchItem;
+            int rng1count = 0;
             
-            int SentenceCount = 0;
-            int WordCount = 0;
-
-            Microsoft.Office.Interop.Word.Range rng1 = docs.Content;
-            Microsoft.Office.Interop.Word.Range rng2 = docs.Content;
-
-            //MessageBox.Show(findtext.Length.ToString());
-
-            for (int x = 0; x < findtext.Length; x++)
+            for (int i = 0; i < findtext.Length; i++)
             {
-                SentenceCount = 0;
-                MessageBox.Show("findtext.Length");
-                foreach (Microsoft.Office.Interop.Word.Sentences mSentence in docs.Sentences)
+                //MessageBox.Show(findtext[i].ToString());
+                rng.Start = 0;
+                rng1count = 0;
+                rng.Find.Execute(ref findtext[i]);
+                while (rng.Find.Found)
                 {
-                    MessageBox.Show("mSentence : " );
-                    string findword = findtext[x].ToString();
-                    WordCount = 0;
-                    foreach (Match match in Regex.Matches(mSentence.ToString(),findword))
-                    {
-                        MessageBox.Show("Match Sentence");
-                        SentenceCount++;
-                        foreach(Microsoft.Office.Interop.Word.Words wrd in mSentence)
-                        {
-                            foreach (Match match1 in Regex.Matches(wrd.ToString(), findword))
-                            {
-                                MessageBox.Show("Match Word");
-                                WordCount++;
-                            }
-                        }
-                    }
+                    rng1count += 1;
+                    rng.Find.Execute(ref findtext[i]);
                 }
-                RetVal += findtext[x] + Environment.NewLine;
-                RetVal += "Sentence Count : " + SentenceCount.ToString() + Environment.NewLine;
-                RetVal += "Word Count : " + WordCount.ToString() + Environment.NewLine + Environment.NewLine;
+
+                CLB.Items.Add(findtext[i] + "( " + rng1count.ToString() + " )");
             }
-            return RetVal;
+            //int wc = CountString("Sri Lanka", docs);
+            //MessageBox.Show("String count is : " + wc.ToString());
         }
+
         private void AddResult(string basePage, string addPage, string SearText)
         {
             Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
@@ -302,16 +220,13 @@ namespace Tango
                 rng2.Find.Forward = true;
                 rng2.Find.Execute(ref findtext2);
 
+
                 if (rng1.Find.Found)
                 {
-                    //CLB.Items.Add(docs.Sentences[i].Text);
-                    //CL2.Items.Add(i);
                     rng1count++;
                 }
                 if (rng2.Find.Found)
                 {
-                    //CLB.Items.Add(docs.Sentences[i].Text);
-                    //CL2.Items.Add(i);
                     rng2count++;
                 }
             }
@@ -320,12 +235,47 @@ namespace Tango
 
             CLB.ScrollAlwaysVisible = true;
             CLB.HorizontalScrollbar = true;
-
-            //CLB.Click += CheckedListBox_Click;
+            CLB.Click += CheckedListBox_Click;
 
             P.Controls.Add(CLB);
-            //P.Controls.Add(CL2);
             P.Visible = true;
+        }
+
+        private int CountString(string v, Microsoft.Office.Interop.Word.Document docs)
+        {
+            int i = 0;
+            string MyDoc = docs.Content.ToString();
+            word.Range rng = docs.Content;
+            rng.Find.Text = v;
+            rng.Find.Replacement.Text = "[]";
+            rng.Find.Forward = true;
+            rng.Find.Wrap = Microsoft.Office.Interop.Word.WdFindWrap.wdFindContinue;
+            rng.Find.Format = false;
+            rng.Find.MatchCase = false;
+            rng.Find.MatchWholeWord = false;
+            rng.Find.MatchWildcards = false;
+            rng.Find.MatchSoundsLike = false;
+            rng.Find.MatchAllWordForms = false;
+
+            rng.Find.Execute(Replace: Microsoft.Office.Interop.Word.WdReplace.wdReplaceAll);
+            string MyDocT = rng.Text;
+
+            MessageBox.Show(docs.Content.Text);
+            MessageBox.Show(MyDocT);
+
+            MessageBox.Show("MyDoc Length is " + docs.Content.Text.Length.ToString());
+            MessageBox.Show("MyDocT Length is " + MyDocT.Length.ToString());
+            MessageBox.Show("Search Sring Length is " + v.Length.ToString());
+            
+            i = (((docs.Content.Text.Length - MyDocT.Length)) / v.Length);
+
+            MessageBox.Show("Occurances is " + i.ToString());
+
+            rng.Find.Replacement.Text = v;
+            rng.Find.Text = "[]";
+            rng.Find.Execute(Replace: Microsoft.Office.Interop.Word.WdReplace.wdReplaceAll);
+
+            return i;
         }
 
         private void btnExecute_Click(object sender, EventArgs e)
@@ -409,36 +359,57 @@ namespace Tango
         private void CheckedListBox_KeyDown(object sender, KeyEventArgs e)
         {
             MessageBox.Show(e.KeyCode.ToString());
-            MessageBox.Show(e.KeyValue.ToString());
-
-            
+            MessageBox.Show(e.KeyValue.ToString());            
         }
 
         private void CheckedListBox_Click(object sender, EventArgs e)
         {
-            Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
-            CheckedListBox C = null;
-            CheckedListBox C1 = null;
             int tabIndex = tabControl1.SelectedIndex;
-            if (tabIndex > 1)
-            {
-                if (tabIndex == 2) { C = GetCtrl("CheckedListBox_Page1") as CheckedListBox; C1 = GetCtrl("CheckedListBox_Page1_2") as CheckedListBox; }
-                if (tabIndex == 3) { C = GetCtrl("CheckedListBox_Page2") as CheckedListBox; C1 = GetCtrl("CheckedListBox_Page2_2") as CheckedListBox; }
-                if (tabIndex == 4) { C = GetCtrl("CheckedListBox_Page3") as CheckedListBox; C1 = GetCtrl("CheckedListBox_Page3_2") as CheckedListBox; }
-                if (tabIndex == 5) { C = GetCtrl("CheckedListBox_Page4") as CheckedListBox; C1 = GetCtrl("CheckedListBox_Page4_2") as CheckedListBox; }
-                if (tabIndex == 6) { C = GetCtrl("CheckedListBox_Page5") as CheckedListBox; C1 = GetCtrl("CheckedListBox_Page5_2") as CheckedListBox; }
-                if (tabIndex == 7) { C = GetCtrl("CheckedListBox_Page6") as CheckedListBox; C1 = GetCtrl("CheckedListBox_Page6_2") as CheckedListBox; }
-            }
 
+            Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
+            CheckedListBox C = GetCLBName(tabIndex);
             CheckedListBox CLB = (CheckedListBox)C;
-            CheckedListBox CL2 = (CheckedListBox)C1;
-
+            Microsoft.Office.Interop.Word.Range rng = docs.Content;
+            
             int index = CLB.SelectedIndex;
-            string SentenceIndex = CL2.Items[index].ToString();
-            int index1 = int.Parse(SentenceIndex);
+            string findText = CLB.SelectedItem.ToString();
+            int scnt = findText.IndexOf(" (", 0);
+            string fText = findText.Substring(0, scnt);
+            
+            Microsoft.Office.Interop.Word.Range rng1 = docs.Content;
 
-            Microsoft.Office.Interop.Word.Range rng1 = docs.Sentences[index1];
-            rng1.Select();
+            //rng1.Find.Forward=true;
+            rng1.Find.ClearHitHighlight();
+            rng1.Find.HitHighlight(FindText: fText, MatchCase: false, HighlightColor: Microsoft.Office.Interop.Word.WdColor.wdColorBlue, TextColor: Microsoft.Office.Interop.Word.WdColor.wdColorWhite);
+            rng1.Find.Execute();
+        }
+
+        private CheckedListBox GetCLBName1(int tabIndex)
+        {
+            CheckedListBox C = null;
+            {
+                if (tabIndex == 2) { C = GetCtrl("CheckedListBox_Page1_2") as CheckedListBox; }
+                if (tabIndex == 3) { C = GetCtrl("CheckedListBox_Page2_2") as CheckedListBox; }
+                if (tabIndex == 4) { C = GetCtrl("CheckedListBox_Page3_2") as CheckedListBox; }
+                if (tabIndex == 5) { C = GetCtrl("CheckedListBox_Page4_2") as CheckedListBox; }
+                if (tabIndex == 6) { C = GetCtrl("CheckedListBox_Page5_2") as CheckedListBox; }
+                if (tabIndex == 7) { C = GetCtrl("CheckedListBox_Page6_2") as CheckedListBox; }
+            }
+            return C;
+        }
+
+        private CheckedListBox GetCLBName(int tabIndex)
+        {
+            CheckedListBox C = null;
+            {
+                if (tabIndex == 2) { C = GetCtrl("CheckedListBox_Page1") as CheckedListBox; }
+                if (tabIndex == 3) { C = GetCtrl("CheckedListBox_Page2") as CheckedListBox; }
+                if (tabIndex == 4) { C = GetCtrl("CheckedListBox_Page3") as CheckedListBox; }
+                if (tabIndex == 5) { C = GetCtrl("CheckedListBox_Page4") as CheckedListBox; }
+                if (tabIndex == 6) { C = GetCtrl("CheckedListBox_Page5") as CheckedListBox; }
+                if (tabIndex == 7) { C = GetCtrl("CheckedListBox_Page6") as CheckedListBox; }
+            }
+            return C;
         }
 
         private void btnSelectAll_Click(object sender, EventArgs e)
