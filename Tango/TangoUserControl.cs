@@ -35,9 +35,9 @@ namespace Tango
             comboBox1.Items.Add("Summary");
 
             TextBox txtBox = new TextBox();
-            txtBox.Font = new Font("Arial", 11, FontStyle.Bold);
+            txtBox.Font = new Font("Arial", 9, FontStyle.Bold);
             
-            txtBox.AppendText("Sentence and Word Count Summary");
+            txtBox.AppendText("String Count Summary");
             txtBox.AppendText(Environment.NewLine);
 
             Control TabSummary = GetCtrl("Summary");
@@ -64,6 +64,7 @@ namespace Tango
                 tp.Name = "Page1";
                 tp.Text = checkBox1.Text;
                 ((TabControl)CLB).Controls.Add(tp);
+                MessageBox.Show("checkbox1");
                 AddResult1("Page1", "Page1_1", SrchItem);
                 comboBox1.Items.Add(checkBox1.Text);
             }
