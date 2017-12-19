@@ -371,12 +371,9 @@ namespace Tango
             Microsoft.Office.Interop.Word.Range rng1 = docs.Content;
 
             string findText = CLB.SelectedItem.ToString();
-            MessageBox.Show(findText);
-
-            int scnt = findText.IndexOf(" (", 0);
-            string fText = findText.Substring(0, scnt);
-
-            MessageBox.Show(fText);
+            
+            int scnt = findText.IndexOf("(", 0);
+            string fText = (findText.Substring(0, scnt)).Trim();
 
             rng1.Start = 0;
             rng1.Find.Forward=true;
