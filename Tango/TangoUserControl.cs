@@ -148,8 +148,6 @@ namespace Tango
             Control Ctr = GetCtrl(basePage);
             Control P = AddPanel(addPage, 0, 0, Ctr.Width - 2, Ctr.Height - 2);
             Ctr.Controls.Add(P);
-            MessageBox.Show("AddResult1");
-
 
             CheckedListBox CLB = new CheckedListBox();
             CLB.Name = "CheckedListBox_" + basePage;
@@ -162,13 +160,14 @@ namespace Tango
             Microsoft.Office.Interop.Word.Range rng = docs.Content;
             rng.Find.ClearFormatting();
 
-            int scount = docs.Sentences.Count;
             object[] findtext = srchItem;
             int rng1count = 0;
-            
+
+            MessageBox.Show("AddResult1");
+
             for (int i = 0; i < findtext.Length; i++)
             {
-                //MessageBox.Show(findtext[i].ToString());
+                MessageBox.Show(findtext[i].ToString());
                 rng.Start = 0;
                 rng1count = 0;
                 rng.Find.Execute(ref findtext[i]);
