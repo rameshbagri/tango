@@ -64,7 +64,6 @@ namespace Tango
                 tp.Name = "Page1";
                 tp.Text = checkBox1.Text;
                 ((TabControl)CLB).Controls.Add(tp);
-                MessageBox.Show("checkbox1");
                 AddResult1("Page1", "Page1_1", SrchItem);
                 comboBox1.Items.Add(checkBox1.Text);
             }
@@ -144,7 +143,7 @@ namespace Tango
 
         private void AddResult1(string basePage, string addPage, object[] srchItem)
         {
-            MessageBox.Show("AddResult1");
+            
             Control Ctr = GetCtrl(basePage);
             Control P = AddPanel(addPage, 0, 0, Ctr.Width - 2, Ctr.Height - 2);
             Ctr.Controls.Add(P);
@@ -160,13 +159,11 @@ namespace Tango
             Microsoft.Office.Interop.Word.Range rng = docs.Content;
             rng.Find.ClearFormatting();
 
-            int scount = docs.Sentences.Count;
             object[] findtext = srchItem;
             int rng1count = 0;
-            
+
             for (int i = 0; i < findtext.Length; i++)
             {
-                //MessageBox.Show(findtext[i].ToString());
                 rng.Start = 0;
                 rng1count = 0;
                 rng.Find.Execute(ref findtext[i]);
@@ -175,11 +172,11 @@ namespace Tango
                     rng1count += 1;
                     rng.Find.Execute(ref findtext[i]);
                 }
-
                 CLB.Items.Add(findtext[i] + "( " + rng1count.ToString() + " )");
             }
-            //int wc = CountString("Sri Lanka", docs);
-            //MessageBox.Show("String count is : " + wc.ToString());
+            CLB.Click += CheckedListBox_Click;
+            P.Controls.Add(CLB);
+            P.Visible = true;
         }
 
         private void AddResult(string basePage, string addPage, string SearText)
