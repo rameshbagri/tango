@@ -144,10 +144,12 @@ namespace Tango
 
         private void AddResult1(string basePage, string addPage, object[] srchItem)
         {
-            MessageBox.Show("AddResult1");
+            
             Control Ctr = GetCtrl(basePage);
             Control P = AddPanel(addPage, 0, 0, Ctr.Width - 2, Ctr.Height - 2);
             Ctr.Controls.Add(P);
+            MessageBox.Show("AddResult1");
+
 
             CheckedListBox CLB = new CheckedListBox();
             CLB.Name = "CheckedListBox_" + basePage;
