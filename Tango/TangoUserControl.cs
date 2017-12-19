@@ -177,9 +177,6 @@ namespace Tango
             CLB.Click += CheckedListBox_Click;
             P.Controls.Add(CLB);
             P.Visible = true;
-
-            //int wc = CountString("Sri Lanka", docs);
-            //MessageBox.Show("String count is : " + wc.ToString());
         }
 
         private void AddResult(string basePage, string addPage, string SearText)
@@ -371,16 +368,18 @@ namespace Tango
             Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
             CheckedListBox C = GetCLBName(tabIndex);
             CheckedListBox CLB = (CheckedListBox)C;
-            Microsoft.Office.Interop.Word.Range rng = docs.Content;
-            
-            int index = CLB.SelectedIndex;
-            string findText = CLB.SelectedItem.ToString();
-            int scnt = findText.IndexOf(" (", 0);
-            string fText = findText.Substring(0, scnt);
-            
             Microsoft.Office.Interop.Word.Range rng1 = docs.Content;
 
-            //rng1.Find.Forward=true;
+            string findText = CLB.SelectedItem.ToString();
+            MessageBox.Show(findText);
+
+            int scnt = findText.IndexOf(" (", 0);
+            string fText = findText.Substring(0, scnt);
+
+            MessageBox.Show(fText);
+
+            rng1.Start = 0;
+            rng1.Find.Forward=true;
             rng1.Find.ClearHitHighlight();
             rng1.Find.HitHighlight(FindText: fText, MatchCase: false, HighlightColor: Microsoft.Office.Interop.Word.WdColor.wdColorBlue, TextColor: Microsoft.Office.Interop.Word.WdColor.wdColorWhite);
             rng1.Find.Execute();
