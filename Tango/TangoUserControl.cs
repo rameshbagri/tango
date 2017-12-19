@@ -174,6 +174,7 @@ namespace Tango
                 }
                 CLB.Items.Add(findtext[i] + "( " + rng1count.ToString() + " )");
             }
+            CLB.Click += CheckedListBox_Click;
             P.Controls.Add(CLB);
             P.Visible = true;
 
