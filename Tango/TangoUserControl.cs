@@ -64,7 +64,6 @@ namespace Tango
                 tp.Name = "Page1";
                 tp.Text = checkBox1.Text;
                 ((TabControl)CLB).Controls.Add(tp);
-                MessageBox.Show(SrchItem.Length.ToString());
                 AddResult1("Page1", "Page1_1", SrchItem);
                 comboBox1.Items.Add(checkBox1.Text);
             }
@@ -163,11 +162,8 @@ namespace Tango
             object[] findtext = srchItem;
             int rng1count = 0;
 
-            MessageBox.Show("AddResult1");
-
             for (int i = 0; i < findtext.Length; i++)
             {
-                MessageBox.Show("findtext is : " + findtext[i].ToString());
                 rng.Start = 0;
                 rng1count = 0;
                 rng.Find.Execute(ref findtext[i]);
@@ -176,9 +172,11 @@ namespace Tango
                     rng1count += 1;
                     rng.Find.Execute(ref findtext[i]);
                 }
-
                 CLB.Items.Add(findtext[i] + "( " + rng1count.ToString() + " )");
             }
+            P.Controls.Add(CLB);
+            P.Visible = true;
+
             //int wc = CountString("Sri Lanka", docs);
             //MessageBox.Show("String count is : " + wc.ToString());
         }
