@@ -152,7 +152,7 @@ namespace Tango
             CLB.Name = "CheckedListBox_" + basePage;
             CLB.Top = 0;
             CLB.Left = 0;
-            CLB.Height = (int)((double)(P.Height) * 0.8);
+            CLB.Height = (int)((double)(P.Height) * 0.4);
             CLB.Width = (int)((double)(P.Width) * 0.98);
 
             Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
@@ -175,6 +175,7 @@ namespace Tango
                 CLB.Items.Add(findtext[i] + "( " + rng1count.ToString() + " )");
             }
             CLB.Click += CheckedListBox_Click;
+            
             P.Controls.Add(CLB);
             P.Visible = true;
         }
@@ -193,7 +194,7 @@ namespace Tango
             CLB.Name = "CheckedListBox_" + basePage;
             CLB.Top = 0;
             CLB.Left = 0;
-            CLB.Height = (int)((double)(P.Height) * 0.8);
+            CLB.Height = (int)((double)(P.Height) * 0.25);
             CLB.Width = (int)((double)(P.Width) * 0.98);
 
             CheckedListBox CL2 = new CheckedListBox();
@@ -231,7 +232,7 @@ namespace Tango
             }
             CLB.Items.Add("Sri Lanka ( " + rng1count.ToString() + " )");
             CLB.Items.Add("Wicket ( " + rng2count.ToString() + " )");
-
+            
             CLB.ScrollAlwaysVisible = true;
             CLB.HorizontalScrollbar = true;
             CLB.Click += CheckedListBox_Click;
@@ -380,8 +381,22 @@ namespace Tango
             rng1.Find.ClearHitHighlight();
             rng1.Find.HitHighlight(FindText: fText, MatchCase: false, HighlightColor: Microsoft.Office.Interop.Word.WdColor.wdColorBlue, TextColor: Microsoft.Office.Interop.Word.WdColor.wdColorWhite);
             rng1.Find.Execute();
+            FindSentence(tabIndex, fText, docs);
         }
 
+        private void FindSentence(int tabIndex, string fText, word.Document docs)
+        {
+            int cnt = 0;
+            for(int sentcount = 1; sentcount <= docs.Sentences.Count; sentcount++)
+            {
+                if (docs.Sentences[sentcount].Text.Contains(fText))
+                {
+                    cnt++;
+                }
+            }
+            MessageBox.Show(cnt.ToString());
+        }
+        
         private CheckedListBox GetCLBName1(int tabIndex)
         {
             CheckedListBox C = null;
