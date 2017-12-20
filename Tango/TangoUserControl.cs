@@ -263,7 +263,6 @@ namespace Tango
             rng1.Find.ClearHitHighlight();
             rng1.Find.HitHighlight(FindText: fText, MatchCase: false, HighlightColor: Microsoft.Office.Interop.Word.WdColor.wdColorBlue, TextColor: Microsoft.Office.Interop.Word.WdColor.wdColorWhite);
             rng1.Find.Execute();
-            FindSentence(tabIndex, fText, docs);
         }
 
         private void FindSentence(int tabIndex, string fText, word.Document docs)
