@@ -145,10 +145,9 @@ namespace Tango
                 
                 CheckedListBox CLB1 = new CheckedListBox();
                 CLB1.Name = "CLB_" + i.ToString() + basePage;
-                TbCtrl.Controls.Add(CLB1);
-
-                MessageBox.Show("added CheckedListBox to tab page");
-
+                CLB1.Width = tp.Width;
+                tp.Controls.Add(CLB1);
+                
                 rng.Start = 0;
                 rng1count = 0;
                 rng.Find.Execute(ref findtext[i]);
@@ -158,13 +157,14 @@ namespace Tango
                     rng.Find.Execute(ref findtext[i]);
                     rng.Select();
                     word.Range rng1 = Globals.ThisAddIn.Application.Selection.Range.Sentences[1];
-                    CLB1.Items.Add(Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text);
+                    CLB1.Items.Add(Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
                 }
                 RetVal += findtext[i] + Environment.NewLine;
                 RetVal += "Word Count : " + rng1count.ToString() + Environment.NewLine + Environment.NewLine;
                 CLB.Items.Add(findtext[i] + "( " + rng1count.ToString() + " )");
+                CLB1.Click += CheckedListBox_Click;
             }
-            //CLB.Click += CheckedListBox_Click;
+            CLB.Click += CheckedListBox_Click;
 
             P.Controls.Add(CLB);
             P.Controls.Add(TbCtrl);
