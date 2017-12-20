@@ -145,7 +145,7 @@ namespace Tango
                 
                 CheckedListBox CLB1 = new CheckedListBox();
                 CLB1.Name = "CLB_" + i.ToString() + basePage;
-                CLB1.Width = tp.Width;
+                CLB1.Width = CLB.Width;
                 tp.Controls.Add(CLB1);
                 
                 rng.Start = 0;
@@ -243,8 +243,38 @@ namespace Tango
                 }
             }
         }
-        
+
         private void CheckedListBox_Click(object sender, EventArgs e)
+        {
+            int tabIndex = tabControl1.SelectedIndex;
+
+            string sendName = ((CheckedListBox)sender).Name;
+            //MessageBox.Show(((CheckedListBox)sender).Name);
+
+            Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
+            CheckedListBox C = GetCLBName(tabIndex);
+            CheckedListBox C1 = GetCtrl(sendName) as CheckedListBox;
+
+            CheckedListBox CLB = (CheckedListBox)C1;
+            Microsoft.Office.Interop.Word.Range rng1 = docs.Content;
+
+            string findText = CLB.SelectedItem.ToString();
+            string fText = findText.Trim();
+            int scnt = findText.IndexOf("(", 0);
+            if(scnt>0)
+            {
+                fText = (findText.Substring(0, scnt)).Trim();
+            }
+
+            rng1.Start = 0;
+            rng1.Find.Forward = true;
+            rng1.Find.ClearHitHighlight();
+            rng1.Find.HitHighlight(FindText: fText, MatchCase: false, HighlightColor: Microsoft.Office.Interop.Word.WdColor.wdColorBlue, TextColor: Microsoft.Office.Interop.Word.WdColor.wdColorWhite);
+            rng1.Find.Execute();
+            rng1.Select();
+        }
+
+        private void CheckedListBox1_Click(object sender, EventArgs e)
         {
             int tabIndex = tabControl1.SelectedIndex;
 
@@ -254,12 +284,12 @@ namespace Tango
             Microsoft.Office.Interop.Word.Range rng1 = docs.Content;
 
             string findText = CLB.SelectedItem.ToString();
-            
+
             int scnt = findText.IndexOf("(", 0);
             string fText = (findText.Substring(0, scnt)).Trim();
 
             rng1.Start = 0;
-            rng1.Find.Forward=true;
+            rng1.Find.Forward = true;
             rng1.Find.ClearHitHighlight();
             rng1.Find.HitHighlight(FindText: fText, MatchCase: false, HighlightColor: Microsoft.Office.Interop.Word.WdColor.wdColorBlue, TextColor: Microsoft.Office.Interop.Word.WdColor.wdColorWhite);
             rng1.Find.Execute();
