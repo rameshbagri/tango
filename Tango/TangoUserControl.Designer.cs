@@ -44,6 +44,7 @@
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.pnlFunctionList.SuspendLayout();
@@ -72,7 +73,7 @@
             // 
             this.btnSelectAll.Location = new System.Drawing.Point(3, 11);
             this.btnSelectAll.Name = "btnSelectAll";
-            this.btnSelectAll.Size = new System.Drawing.Size(75, 23);
+            this.btnSelectAll.Size = new System.Drawing.Size(63, 23);
             this.btnSelectAll.TabIndex = 0;
             this.btnSelectAll.Text = "Select All";
             this.btnSelectAll.UseVisualStyleBackColor = true;
@@ -80,9 +81,9 @@
             // 
             // btnExecute
             // 
-            this.btnExecute.Location = new System.Drawing.Point(115, 11);
+            this.btnExecute.Location = new System.Drawing.Point(72, 11);
             this.btnExecute.Name = "btnExecute";
-            this.btnExecute.Size = new System.Drawing.Size(75, 23);
+            this.btnExecute.Size = new System.Drawing.Size(61, 23);
             this.btnExecute.TabIndex = 1;
             this.btnExecute.Text = "Execute";
             this.btnExecute.UseVisualStyleBackColor = true;
@@ -90,9 +91,9 @@
             // 
             // btnReser
             // 
-            this.btnReser.Location = new System.Drawing.Point(213, 11);
+            this.btnReser.Location = new System.Drawing.Point(220, 11);
             this.btnReser.Name = "btnReser";
-            this.btnReser.Size = new System.Drawing.Size(75, 23);
+            this.btnReser.Size = new System.Drawing.Size(68, 23);
             this.btnReser.TabIndex = 2;
             this.btnReser.Text = "Reset";
             this.btnReser.UseVisualStyleBackColor = true;
@@ -100,6 +101,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.button1);
             this.panel2.Controls.Add(this.btnReser);
             this.panel2.Controls.Add(this.btnExecute);
             this.panel2.Controls.Add(this.btnSelectAll);
@@ -221,6 +223,16 @@
             this.checkBox1.Text = "Find / Replace";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(139, 11);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 3;
+            this.button1.Text = "Select";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // TangoUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -257,5 +269,6 @@
         private System.Windows.Forms.CheckBox checkBox3;
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Button button1;
     }
 }

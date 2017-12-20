@@ -386,6 +386,7 @@ namespace Tango
 
         private void FindSentence(int tabIndex, string fText, word.Document docs)
         {
+            DateTime dt = DateTime.Now;
             int cnt = 0;
             for(int sentcount = 1; sentcount <= docs.Sentences.Count; sentcount++)
             {
@@ -395,6 +396,8 @@ namespace Tango
                 }
             }
             MessageBox.Show(cnt.ToString());
+            DateTime dt1 = DateTime.Now;
+            MessageBox.Show((dt1 - dt).ToString());
         }
         
         private CheckedListBox GetCLBName1(int tabIndex)
@@ -834,6 +837,14 @@ namespace Tango
         {
             int index = comboBox1.SelectedIndex;
             tabControl1.SelectedIndex = index;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
+            word.Range rng = Globals.ThisAddIn.Application.Selection.Range.Sentences[1];
+            rng.Select();
+
         }
     }
 }
