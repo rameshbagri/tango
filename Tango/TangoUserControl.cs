@@ -126,6 +126,7 @@ namespace Tango
             CLB.Width = (int)((double)(P.Width) * 0.98);
 
             TabControl TbCtrl = AddTabCtrl("TabCtrl" + basePage, (int)((double)(P.Height) * 0.42), 0, (int)((double)(P.Width) * 0.98), (int)((double)(P.Height) * 0.5));
+            MessageBox.Show("Created tab control");
 
             Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
             Microsoft.Office.Interop.Word.Range rng = docs.Content;
@@ -142,6 +143,7 @@ namespace Tango
                 tp.Name = basePage + i.ToString();
                 tp.Text = findtext[i].ToString();
                 ((TabControl)TbCtrl).Controls.Add(tp);
+                MessageBox.Show("added tab control tab page");
 
                 CheckedListBox CLB1 = new CheckedListBox();
                 CLB1.Name = "CLB_" + basePage + i.ToString();
