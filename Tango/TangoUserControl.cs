@@ -279,8 +279,9 @@ namespace Tango
             if(MastListBox(sendName))
             {
                 int TIndex = CLB.SelectedIndex;
-                string Cname = "TabCtrlPage" + (TabIndex-1).ToString();
+                string Cname = "TabCtrlPage" + (tabIndex - 1).ToString();
                 MessageBox.Show(Cname);
+                MessageBox.Show("Selected Item : " + TIndex.ToString());
             }
         }
 
