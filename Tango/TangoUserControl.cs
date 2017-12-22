@@ -156,16 +156,20 @@ namespace Tango
                     rng1count += 1;
                     rng.Find.Execute(ref findtext[i]);
                     rng.Select();
-                    word.Range rng1 = Globals.ThisAddIn.Application.Selection.Range.Sentences[1];
-                    CLB1.Items.Add(Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
+                    string setence = (Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
+                    if (setence.Length > 0)
+                    {
+                        CLB1.Items.Add(Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
+                    }
                 }
                 RetVal += findtext[i] + Environment.NewLine;
                 RetVal += "Word Count : " + rng1count.ToString() + Environment.NewLine + Environment.NewLine;
                 CLB.Items.Add(findtext[i] + "( " + rng1count.ToString() + " )");
                 CLB1.Click += CheckedListBox_Click;
+                CLB1.HorizontalScrollbar = true;
             }
             CLB.Click += CheckedListBox_Click;
-
+            
             P.Controls.Add(CLB);
             P.Controls.Add(TbCtrl);
             P.Visible = true;
@@ -272,6 +276,24 @@ namespace Tango
             rng1.Find.HitHighlight(FindText: fText, MatchCase: false, HighlightColor: Microsoft.Office.Interop.Word.WdColor.wdColorBlue, TextColor: Microsoft.Office.Interop.Word.WdColor.wdColorWhite);
             rng1.Find.Execute();
             rng1.Select();
+            if(MastListBox(sendName))
+            {
+                int TIndex = CLB.SelectedIndex;
+                string Cname = "TabCtrlPage" + (TabIndex-1).ToString();
+                MessageBox.Show(Cname);
+            }
+        }
+
+        private bool MastListBox(string sendName)
+        {
+            bool mList = false;
+            if (sendName == "CheckedListBox_Page1") { mList = true; }
+            if (sendName == "CheckedListBox_Page2") { mList = true; }
+            if (sendName == "CheckedListBox_Page3") { mList = true; }
+            if (sendName == "CheckedListBox_Page4") { mList = true; }
+            if (sendName == "CheckedListBox_Page5") { mList = true; }
+            if (sendName == "CheckedListBox_Page6") { mList = true; }
+            return mList;
         }
 
         private void CheckedListBox1_Click(object sender, EventArgs e)
