@@ -113,6 +113,7 @@ namespace Tango
 
         private string AddSummary1A(string basePage, string addPage, object[] srchItem)
         {
+            Globals.ThisAddIn.Application.ScreenUpdating = false;
             string RetVal = "";
             Control Ctr = GetCtrl(basePage);
             Control P = AddPanel(addPage, 0, 0, Ctr.Width - 2, Ctr.Height - 2);
@@ -173,6 +174,7 @@ namespace Tango
             P.Controls.Add(CLB);
             P.Controls.Add(TbCtrl);
             P.Visible = true;
+            Globals.ThisAddIn.Application.ScreenUpdating = true;
             return RetVal;
         }
 
@@ -282,6 +284,8 @@ namespace Tango
                 string Cname = "TabCtrlPage" + (tabIndex - 1).ToString();
                 MessageBox.Show(Cname);
                 MessageBox.Show("Selected Item : " + TIndex.ToString());
+                TabControl TC = GetCtrl(Cname) as TabControl;
+                TC.TabPages[TIndex].Select();
             }
         }
 
