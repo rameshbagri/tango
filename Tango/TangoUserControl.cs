@@ -126,7 +126,7 @@ namespace Tango
             CLB.Height = (int)((double)(P.Height) * 0.4);
             CLB.Width = (int)((double)(P.Width) * 0.98);
 
-            TabControl TbCtrl = AddTabCtrl("TabCtrl" + basePage, (int)((double)(P.Height) * 0.42), 0, (int)((double)(P.Width) * 0.98), (int)((double)(P.Height) * 0.5));
+            TabControl TbCtrl = AddTabCtrl("TabCtrl" + basePage, (int)((double)(P.Height) * 0.42), 0, (int)((double)(P.Width) * 0.98), (int)((double)(P.Height) - CLB.Height));
     
             Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
             Microsoft.Office.Interop.Word.Range rng = docs.Content;
@@ -145,7 +145,7 @@ namespace Tango
                 ((TabControl)TbCtrl).Controls.Add(tp);
                 
                 CheckedListBox CLB1 = new CheckedListBox();
-                CLB1.Name = "CLB_" + i.ToString() + basePage;
+                CLB1.Name = "TabCtrl" + basePage + "CLB_" + i.ToString();
                 CLB1.Width = CLB.Width;
                 tp.Controls.Add(CLB1);
                 
@@ -158,7 +158,7 @@ namespace Tango
                     rng.Find.Execute(ref findtext[i]);
                     rng.Select();
                     string setence = (Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
-                    if (setence.Length > 0)
+                    if (setence.Length > findtext[i].ToString().Length)
                     {
                         CLB1.Items.Add(Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
                     }
@@ -168,45 +168,35 @@ namespace Tango
                 CLB.Items.Add(findtext[i] + "( " + rng1count.ToString() + " )");
                 CLB1.Click += CheckedListBox_Click;
                 CLB1.HorizontalScrollbar = true;
+                rng.Start = 0;
             }
             CLB.Click += CheckedListBox_Click;
             
             P.Controls.Add(CLB);
             P.Controls.Add(TbCtrl);
             P.Visible = true;
+            
             Globals.ThisAddIn.Application.ScreenUpdating = true;
             return RetVal;
         }
 
         private void btnExecute_Click(object sender, EventArgs e)
         {
-            CheckedListBox C = null;
-            CheckedListBox C1 = null;
             int tabIndex = tabControl1.SelectedIndex;
-            if (tabIndex > 1)
-            {
-                if (tabIndex == 2) { C = GetCtrl("CheckedListBox_Page1") as CheckedListBox; C1 = GetCtrl("CheckedListBox_Page1_2") as CheckedListBox; }
-                if (tabIndex == 3) { C = GetCtrl("CheckedListBox_Page2") as CheckedListBox; C1 = GetCtrl("CheckedListBox_Page2_2") as CheckedListBox; }
-                if (tabIndex == 4) { C = GetCtrl("CheckedListBox_Page3") as CheckedListBox; C1 = GetCtrl("CheckedListBox_Page3_2") as CheckedListBox; }
-                if (tabIndex == 5) { C = GetCtrl("CheckedListBox_Page4") as CheckedListBox; C1 = GetCtrl("CheckedListBox_Page4_2") as CheckedListBox; }
-                if (tabIndex == 6) { C = GetCtrl("CheckedListBox_Page5") as CheckedListBox; C1 = GetCtrl("CheckedListBox_Page5_2") as CheckedListBox; }
-                if (tabIndex == 7) { C = GetCtrl("CheckedListBox_Page6") as CheckedListBox; C1 = GetCtrl("CheckedListBox_Page6_2") as CheckedListBox; }
-            }
+            string TName = "TabCtrlPage" + (tabIndex - 1).ToString();
+            TabControl TC = GetCtrl(TName) as TabControl;
+            int Tindex = TC.SelectedIndex;
+            string CHkLBNm = TName + "CLB_" + Tindex;
+            CheckedListBox TabCL = GetCtrl(CHkLBNm) as CheckedListBox;
 
-            CheckedListBox CLB = (CheckedListBox)C;
-            CheckedListBox CL2 = (CheckedListBox)C1;
-
-            bool SAll = (CLB.Items.Count == CLB.CheckedItems.Count);
+            bool SAll = (TabCL.Items.Count == TabCL.CheckedItems.Count);
 
             Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
             Microsoft.Office.Interop.Word.Range rng = docs.Content;
             rng.Find.ClearFormatting();
 
-
-            string FindTest = tabControl1.TabPages[tabIndex].Text;
-            int scnt = FindTest.IndexOf(" => ", 0);
-            object fText = FindTest.Substring(0, scnt);
-            object rText = (FindTest.Substring(scnt + 3)).Trim();
+            object fText = "Sri Lanka";
+            object rText = "Canada";
 
             if (SAll)
             {
@@ -226,27 +216,30 @@ namespace Tango
             else
             {
                 int i = 0;
-                foreach (CheckBox item in C.Controls)
+                foreach (object itemChecked in TabCL.CheckedItems)
                 {
-                    if(item.Checked == true)
-                    {
-                        int nindex = int.Parse(CL2.Items[i].ToString());
-                        rng = docs.Sentences[nindex];
-                        rng.Find.Text = fText.ToString();
-                        rng.Find.Replacement.Text = rText.ToString();
-                        rng.Find.Forward = true;
-                        rng.Find.Wrap = Microsoft.Office.Interop.Word.WdFindWrap.wdFindContinue;
-                        rng.Find.Format = false;
-                        rng.Find.MatchCase = false;
-                        rng.Find.MatchWholeWord = false;
-                        rng.Find.MatchWildcards = false;
-                        rng.Find.MatchSoundsLike = false;
-                        rng.Find.MatchAllWordForms = false;
-
-                        rng.Find.Execute(Replace: Microsoft.Office.Interop.Word.WdReplace.wdReplaceAll);
-                    }
-                    i++;
+                    Microsoft.Office.Interop.Word.Range rng1 = docs.Content;
+                    rng1.Find.Text = itemChecked.ToString();
+                    rng1.Find.Execute();
+                    rng1.Select();
+                    rng = (Globals.ThisAddIn.Application.Selection.Range.Sentences[1]);
+                    rng.Find.Text = fText.ToString();
+                    rng.Find.Replacement.Text = rText.ToString();
+                    rng.Find.Forward = true;
+                    rng.Find.Wrap = Microsoft.Office.Interop.Word.WdFindWrap.wdFindContinue;
+                    rng.Find.Format = false;
+                    rng.Find.MatchCase = false;
+                    rng.Find.MatchWholeWord = false;
+                    rng.Find.MatchWildcards = false;
+                    rng.Find.MatchSoundsLike = false;
+                    rng.Find.MatchAllWordForms = false;
+            
+                    rng.Find.Execute(Replace: Microsoft.Office.Interop.Word.WdReplace.wdReplaceOne);
+                    TabCL.FindString(itemChecked.ToString());
+                    int indextodel = TabCL.SelectedIndex;
+                    TabCL.Items.RemoveAt(indextodel);
                 }
+                i++;
             }
         }
 
@@ -255,10 +248,8 @@ namespace Tango
             int tabIndex = tabControl1.SelectedIndex;
 
             string sendName = ((CheckedListBox)sender).Name;
-            //MessageBox.Show(((CheckedListBox)sender).Name);
-
+            
             Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
-            CheckedListBox C = GetCLBName(tabIndex);
             CheckedListBox C1 = GetCtrl(sendName) as CheckedListBox;
 
             CheckedListBox CLB = (CheckedListBox)C1;
@@ -266,6 +257,7 @@ namespace Tango
 
             string findText = CLB.SelectedItem.ToString();
             string fText = findText.Trim();
+            CLB.SetItemChecked(CLB.SelectedIndex, true);
             int scnt = findText.IndexOf("(", 0);
             if(scnt>0)
             {
@@ -282,10 +274,8 @@ namespace Tango
             {
                 int TIndex = CLB.SelectedIndex;
                 string Cname = "TabCtrlPage" + (tabIndex - 1).ToString();
-                MessageBox.Show(Cname);
-                MessageBox.Show("Selected Item : " + TIndex.ToString());
                 TabControl TC = GetCtrl(Cname) as TabControl;
-                TC.TabPages[TIndex].Select();
+                TC.SelectTab(TIndex);
             }
         }
 
@@ -379,24 +369,17 @@ namespace Tango
                 checkBox5.Checked = true;
                 checkBox6.Checked = true;
             }
-            else
+            else if(tabIndex > 1)
             {
-                CheckedListBox C = null;
-                if (tabIndex == 2) { C = GetCtrl("CheckedListBox_Page1") as CheckedListBox; }
-                if (tabIndex == 3) { C = GetCtrl("CheckedListBox_Page2") as CheckedListBox; }
-                if (tabIndex == 4) { C = GetCtrl("CheckedListBox_Page3") as CheckedListBox; }
-                if (tabIndex == 5) { C = GetCtrl("CheckedListBox_Page4") as CheckedListBox; }
-                if (tabIndex == 6) { C = GetCtrl("CheckedListBox_Page5") as CheckedListBox; }
-                if (tabIndex == 7) { C = GetCtrl("CheckedListBox_Page6") as CheckedListBox; }
+                string TName = "TabCtrlPage" + (tabIndex - 1).ToString();
+                TabControl TC = GetCtrl(TName) as TabControl;
+                int Tindex = TC.SelectedIndex;
+                string CHkLBNm = TName + "CLB_" + Tindex;
+                CheckedListBox TabCL = GetCtrl(CHkLBNm) as CheckedListBox;
 
-                for (int i = 0; i < ((CheckedListBox)C).Items.Count; i++)
+                for (int i = 0; i < ((CheckedListBox)TabCL).Items.Count; i++)
                 {
-                    ((CheckedListBox)C).SetItemChecked(i, true);
-                }
-
-                foreach (CheckBox item in C.Controls)
-                {
-                    item.Checked = true;
+                    ((CheckedListBox)TabCL).SetItemChecked(i, true);
                 }
             }
         }
@@ -796,7 +779,6 @@ namespace Tango
 
         }
 
-
         private string AddSummary1(object[] srchItem)
         {
             string RetVal = "";
@@ -824,7 +806,6 @@ namespace Tango
             }
             return RetVal;
         }
-
 
         private void AddResult1(string basePage, string addPage, object[] srchItem)
         {
@@ -962,10 +943,83 @@ namespace Tango
             return i;
         }
 
+        private void btnExecute1_Click(object sender, EventArgs e)
+        {
+            CheckedListBox C = null;
+            CheckedListBox C1 = null;
+            int tabIndex = tabControl1.SelectedIndex;
+
+            string TName = "TabCtrlPage" + (tabIndex - 1).ToString();
+            TabControl TC = GetCtrl(TName) as TabControl;
+            int Tindex = TC.SelectedIndex;
+            string CHkLBNm = TName + "CLB_" + Tindex;
+            CheckedListBox TabCL = GetCtrl(CHkLBNm) as CheckedListBox;
+
+            if (tabIndex > 1)
+            {
+                if (tabIndex == 2) { C = GetCtrl("CheckedListBox_Page1") as CheckedListBox; C1 = GetCtrl("CheckedListBox_Page1_2") as CheckedListBox; }
+                if (tabIndex == 3) { C = GetCtrl("CheckedListBox_Page2") as CheckedListBox; C1 = GetCtrl("CheckedListBox_Page2_2") as CheckedListBox; }
+                if (tabIndex == 4) { C = GetCtrl("CheckedListBox_Page3") as CheckedListBox; C1 = GetCtrl("CheckedListBox_Page3_2") as CheckedListBox; }
+                if (tabIndex == 5) { C = GetCtrl("CheckedListBox_Page4") as CheckedListBox; C1 = GetCtrl("CheckedListBox_Page4_2") as CheckedListBox; }
+                if (tabIndex == 6) { C = GetCtrl("CheckedListBox_Page5") as CheckedListBox; C1 = GetCtrl("CheckedListBox_Page5_2") as CheckedListBox; }
+                if (tabIndex == 7) { C = GetCtrl("CheckedListBox_Page6") as CheckedListBox; C1 = GetCtrl("CheckedListBox_Page6_2") as CheckedListBox; }
+            }
+
+            CheckedListBox CLB = (CheckedListBox)C;
+            CheckedListBox CL2 = (CheckedListBox)C1;
+
+            bool SAll = (TabCL.Items.Count == TabCL.CheckedItems.Count);
+
+            Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
+            Microsoft.Office.Interop.Word.Range rng = docs.Content;
+            rng.Find.ClearFormatting();
 
 
+            object fText = "Sri Lanka";
+            object rText = "Canada";
+
+            if (SAll)
+            {
+                rng.Find.Text = fText.ToString();
+                rng.Find.Replacement.Text = rText.ToString();
+                rng.Find.Forward = true;
+                rng.Find.Wrap = Microsoft.Office.Interop.Word.WdFindWrap.wdFindContinue;
+                rng.Find.Format = false;
+                rng.Find.MatchCase = false;
+                rng.Find.MatchWholeWord = false;
+                rng.Find.MatchWildcards = false;
+                rng.Find.MatchSoundsLike = false;
+                rng.Find.MatchAllWordForms = false;
+
+                rng.Find.Execute(Replace: Microsoft.Office.Interop.Word.WdReplace.wdReplaceAll);
+            }
+            else
+            {
+                int i = 0;
+                foreach (CheckBox item in TabCL.Controls)
+                {
+                    if (item.Checked == true)
+                    {
+                        int nindex = int.Parse(CL2.Items[i].ToString());
+                        rng = docs.Sentences[nindex];
+                        rng.Find.Text = fText.ToString();
+                        rng.Find.Replacement.Text = rText.ToString();
+                        rng.Find.Forward = true;
+                        rng.Find.Wrap = Microsoft.Office.Interop.Word.WdFindWrap.wdFindContinue;
+                        rng.Find.Format = false;
+                        rng.Find.MatchCase = false;
+                        rng.Find.MatchWholeWord = false;
+                        rng.Find.MatchWildcards = false;
+                        rng.Find.MatchSoundsLike = false;
+                        rng.Find.MatchAllWordForms = false;
+
+                        rng.Find.Execute(Replace: Microsoft.Office.Interop.Word.WdReplace.wdReplaceOne);
+                    }
+                    i++;
+                }
+            }
+        }
 
 
     }
 }
-
