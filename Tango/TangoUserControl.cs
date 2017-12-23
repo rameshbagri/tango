@@ -218,6 +218,9 @@ namespace Tango
                 rng.Find.MatchAllWordForms = false;
                 
                 rng.Find.Execute(Replace: Microsoft.Office.Interop.Word.WdReplace.wdReplaceAll);
+
+                TC.Controls.RemoveAt(Tindex);
+                CLB.Items.RemoveAt(Tindex);
             }
             else
             {
