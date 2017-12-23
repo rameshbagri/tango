@@ -168,7 +168,10 @@ namespace Tango
                 CLB.Items.Add(findtext[i] + "( " + rng1count.ToString() + " )");
                 CLB1.Click += CheckedListBox_Click;
                 CLB1.HorizontalScrollbar = true;
+                rng = docs.Content;
                 rng.Start = 0;
+                rng.End = 0;
+                rng.Select();
             }
             CLB.Click += CheckedListBox_Click;
             
@@ -186,6 +189,9 @@ namespace Tango
             string TName = "TabCtrlPage" + (tabIndex - 1).ToString();
             TabControl TC = GetCtrl(TName) as TabControl;
             int Tindex = TC.SelectedIndex;
+            string ClbNm = "CheckedListBox_Page" + (tabIndex - 1).ToString();
+            CheckedListBox CLB = GetCtrl(ClbNm) as CheckedListBox;
+
             string CHkLBNm = TName + "CLB_" + Tindex;
             CheckedListBox TabCL = GetCtrl(CHkLBNm) as CheckedListBox;
 
@@ -216,6 +222,8 @@ namespace Tango
             else
             {
                 int i = 0;
+                List<int> remotem = new List<int>();
+
                 foreach (object itemChecked in TabCL.CheckedItems)
                 {
                     Microsoft.Office.Interop.Word.Range rng1 = docs.Content;
@@ -236,10 +244,31 @@ namespace Tango
             
                     rng.Find.Execute(Replace: Microsoft.Office.Interop.Word.WdReplace.wdReplaceOne);
                     TabCL.FindString(itemChecked.ToString());
-                    int indextodel = TabCL.SelectedIndex;
-                    TabCL.Items.RemoveAt(indextodel);
+                    //int indextodel = TabCL.SelectedIndex;
+                    int indextodel = TabCL.FindString(itemChecked.ToString());
+                    remotem.Add(indextodel);
+                    int countnum1 = CLB.Items[Tindex].ToString().IndexOf("(", 0);
+                    int countnum2 = CLB.Items[Tindex].ToString().IndexOf(")", 0);
+
+                    string nm = CLB.Items[Tindex].ToString().Substring(0, countnum1);
+                    string NumPart = CLB.Items[Tindex].ToString().Substring(countnum1 + 1, countnum2-countnum1 - 1).Trim();
+
+                    int countnum = int.Parse(NumPart) - 1;
+
+                    CLB.Items[Tindex] = nm + "( " + countnum.ToString() + " )";
+                    rng = docs.Content;
+                    rng.Start = 0;
+                    rng.End=0;
+                    rng.Select();
                 }
                 i++;
+                remotem.Sort();
+                remotem.Reverse();
+                foreach (int x in remotem.ToList())
+                {
+                    MessageBox.Show(x.ToString());
+                    TabCL.Items.RemoveAt(x);
+                }
             }
         }
 
