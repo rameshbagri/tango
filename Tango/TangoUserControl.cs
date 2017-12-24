@@ -50,7 +50,7 @@ namespace Tango
             txtBox.ScrollBars = ScrollBars.Both;
             txtBox.ReadOnly = true;
 
-            object[] SrchItem = { "Sri Lanka", "Wicket" };
+            object[] SrchItem = { "Sri Lanka", "Wicket", "only", "merely", "actually", "fully", "generally", "completely", "rarely", "continuously", "immediately" };
 
             //MessageBox.Show(txtBox.Text);
 
@@ -113,12 +113,13 @@ namespace Tango
 
         private string AddSummary1A(string basePage, string addPage, object[] srchItem)
         {
+            DateTime dt1 = DateTime.Now;
             Globals.ThisAddIn.Application.ScreenUpdating = false;
             string RetVal = "";
             Control Ctr = GetCtrl(basePage);
             Control P = AddPanel(addPage, 0, 0, Ctr.Width - 2, Ctr.Height - 2);
             Ctr.Controls.Add(P);
-
+            
             CheckedListBox CLB = new CheckedListBox();
             CLB.Name = "CheckedListBox_" + basePage;
             CLB.Top = 0;
@@ -136,7 +137,6 @@ namespace Tango
             object[] findtext = srchItem;
             int rng1count = 0;
             TabPage tp = new TabPage();
-
             for (int i = 0; i < findtext.Length; i++)
             {
                 tp = new TabPage();
@@ -163,11 +163,18 @@ namespace Tango
                         CLB1.Items.Add(Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
                     }
                 }
-                RetVal += findtext[i] + Environment.NewLine;
-                RetVal += "Word Count : " + rng1count.ToString() + Environment.NewLine + Environment.NewLine;
-                CLB.Items.Add(findtext[i] + "( " + rng1count.ToString() + " )");
-                CLB1.Click += CheckedListBox_Click;
-                CLB1.HorizontalScrollbar = true;
+                if (rng1count == 0)
+                {
+                    TbCtrl.Controls.Remove(tp);
+                }
+                else
+                {
+                    RetVal += findtext[i] + Environment.NewLine;
+                    RetVal += "Word Count : " + rng1count.ToString() + Environment.NewLine + Environment.NewLine;
+                    CLB.Items.Add(findtext[i] + "( " + rng1count.ToString() + " )");
+                    CLB1.Click += CheckedListBox_Click;
+                    CLB1.HorizontalScrollbar = true;
+                }
                 rng = docs.Content;
                 rng.Start = 0;
                 rng.End = 0;
@@ -180,6 +187,12 @@ namespace Tango
             P.Visible = true;
             
             Globals.ThisAddIn.Application.ScreenUpdating = true;
+            DateTime dt2 = DateTime.Now;
+
+            TimeSpan dt = dt2 - dt1;
+
+            MessageBox.Show(dt.Minutes.ToString());
+
             return RetVal;
         }
 
@@ -194,6 +207,8 @@ namespace Tango
 
             string CHkLBNm = TName + "CLB_" + Tindex;
             CheckedListBox TabCL = GetCtrl(CHkLBNm) as CheckedListBox;
+            MessageBox.Show(CHkLBNm);
+
 
             bool SAll = (TabCL.Items.Count == TabCL.CheckedItems.Count);
 
@@ -805,10 +820,30 @@ namespace Tango
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
-            word.Range rng = Globals.ThisAddIn.Application.Selection.Range.Sentences[1];
-            rng.Select();
+            int tabIndex = tabControl1.SelectedIndex;
+            //MessageBox.Show(tabIndex.ToString());
+            if (tabIndex == 0)
+            {
+                checkBox1.Checked = false;
+                checkBox2.Checked = false;
+                checkBox3.Checked = false;
+                checkBox4.Checked = false;
+                checkBox5.Checked = false;
+                checkBox6.Checked = false;
+            }
+            else if (tabIndex > 1)
+            {
+                string TName = "TabCtrlPage" + (tabIndex - 1).ToString();
+                TabControl TC = GetCtrl(TName) as TabControl;
+                int Tindex = TC.SelectedIndex;
+                string CHkLBNm = TName + "CLB_" + Tindex;
+                CheckedListBox TabCL = GetCtrl(CHkLBNm) as CheckedListBox;
 
+                for (int i = 0; i < ((CheckedListBox)TabCL).Items.Count; i++)
+                {
+                    ((CheckedListBox)TabCL).SetItemChecked(i, false);
+                }
+            }
         }
 
         private string AddSummary1(object[] srchItem)
