@@ -109,6 +109,7 @@ namespace Tango
             }
             TabPage t = new TabPage();
             tabControl1.SelectedIndex = 1;
+            
         }
 
         private string AddSummary1A(string basePage, string addPage, object[] srchItem)
@@ -124,7 +125,7 @@ namespace Tango
             CLB.Name = "CheckedListBox_" + basePage;
             CLB.Top = 0;
             CLB.Left = 0;
-            CLB.Height = (int)((double)(P.Height) * 0.4);
+            CLB.Height = (int)((double)(P.Height) * 0.99);
             CLB.Width = (int)((double)(P.Width) * 0.98);
 
             TabControl TbCtrl = AddTabCtrl("TabCtrl" + basePage, (int)((double)(P.Height) * 0.42), 0, (int)((double)(P.Width) * 0.98), (int)((double)(P.Height) - CLB.Height));
@@ -158,9 +159,12 @@ namespace Tango
                     rng.Find.Execute(ref findtext[i]);
                     rng.Select();
                     string setence = (Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
-                    if (setence.Length > findtext[i].ToString().Length)
+                    if (CLB1.FindString(setence) < 0)
                     {
-                        CLB1.Items.Add(Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
+                        if (setence.Length > findtext[i].ToString().Length)
+                        {
+                            CLB1.Items.Add(Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
+                        }
                     }
                 }
                 if (rng1count == 0)
@@ -173,6 +177,7 @@ namespace Tango
                     RetVal += "Word Count : " + rng1count.ToString() + Environment.NewLine + Environment.NewLine;
                     CLB.Items.Add(findtext[i] + "( " + rng1count.ToString() + " )");
                     CLB1.Click += CheckedListBox_Click;
+                    CLB1.MouseHover += CheckedListBox_MouseHover;
                     CLB1.HorizontalScrollbar = true;
                 }
                 rng = docs.Content;
@@ -192,6 +197,18 @@ namespace Tango
             TimeSpan dt = dt2 - dt1;
             
             return RetVal;
+        }
+
+        private void CheckedListBox_MouseHover(object sender, EventArgs e)
+        {
+            int tabIndex = tabControl1.SelectedIndex;
+
+            string sendName = ((CheckedListBox)sender).Name;
+
+            Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
+            CheckedListBox C1 = GetCtrl(sendName) as CheckedListBox;
+            CheckedListBox CLB = (CheckedListBox)C1;
+            CLB.Focus();
         }
 
         private void btnExecute_Click(object sender, EventArgs e)
@@ -833,7 +850,12 @@ namespace Tango
                 string TName = "TabCtrlPage" + (tabIndex - 1).ToString();
                 TabControl TC = GetCtrl(TName) as TabControl;
                 int Tindex = TC.SelectedIndex;
-                string CHkLBNm = TName + "CLB_" + Tindex;
+                TabPage TP = TC.SelectedTab;
+                string CHkLBNm = TName + "CLB_";
+                foreach (Control control1 in TP.Controls)
+                {
+                    CHkLBNm = control1.Name.ToString();
+                }
                 CheckedListBox TabCL = GetCtrl(CHkLBNm) as CheckedListBox;
 
                 for (int i = 0; i < ((CheckedListBox)TabCL).Items.Count; i++)
