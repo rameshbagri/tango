@@ -413,8 +413,12 @@ namespace Tango
             {
                 string TName = "TabCtrlPage" + (tabIndex - 1).ToString();
                 TabControl TC = GetCtrl(TName) as TabControl;
-                int Tindex = TC.SelectedIndex;
-                string CHkLBNm = TName + "CLB_" + Tindex;
+                TabPage TP = TC.SelectedTab;
+                string CHkLBNm = TName + "CLB_" ;
+                foreach ( Control control1 in TP.Controls)
+                {
+                    CHkLBNm = control1.Name.ToString();
+                }
                 CheckedListBox TabCL = GetCtrl(CHkLBNm) as CheckedListBox;
 
                 for (int i = 0; i < ((CheckedListBox)TabCL).Items.Count; i++)
