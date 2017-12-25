@@ -190,7 +190,9 @@ namespace Tango
             DateTime dt2 = DateTime.Now;
 
             TimeSpan dt = dt2 - dt1;
-            
+
+            MessageBox.Show(dt.Milliseconds.ToString());
+
             return RetVal;
         }
 
@@ -205,7 +207,9 @@ namespace Tango
 
             string CHkLBNm = TName + "CLB_" + Tindex;
             CheckedListBox TabCL = GetCtrl(CHkLBNm) as CheckedListBox;
-            
+            MessageBox.Show(CHkLBNm);
+
+
             bool SAll = (TabCL.Items.Count == TabCL.CheckedItems.Count);
 
             Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
@@ -280,6 +284,7 @@ namespace Tango
                 remotem.Reverse();
                 foreach (int x in remotem.ToList())
                 {
+                    MessageBox.Show(x.ToString());
                     TabCL.Items.RemoveAt(x);
                 }
             }
@@ -365,7 +370,9 @@ namespace Tango
                     cnt++;
                 }
             }
+            MessageBox.Show(cnt.ToString());
             DateTime dt1 = DateTime.Now;
+            MessageBox.Show((dt1 - dt).ToString());
         }
         
         private CheckedListBox GetCLBName1(int tabIndex)
