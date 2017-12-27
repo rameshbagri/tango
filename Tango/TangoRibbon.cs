@@ -16,7 +16,11 @@ namespace Tango
 
         private void toggleButton1_Click(object sender, RibbonControlEventArgs e)
         {
-            if (!(Globals.ThisAddIn.TaskPane.Visible = false)) { Globals.ThisAddIn.TaskPane.Visible = ((RibbonToggleButton)sender).Checked; }
+            if (!(Globals.ThisAddIn.TaskPane.Visible = false))
+            {
+                Globals.ThisAddIn.TaskPane.Visible = ((RibbonToggleButton)sender).Checked;
+                Globals.ThisAddIn.TaskPane.Width = (int)(double)(Globals.ThisAddIn.Application.Width * .35);
+            }
         }
     }
 }
