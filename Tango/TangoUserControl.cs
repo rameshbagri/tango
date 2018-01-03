@@ -89,6 +89,7 @@ namespace Tango
 
         private string AddSummary1A(string basePage, string addPage, object[] srchItem, object[] ReplItem)
         {
+            bool Trev = false;
             DateTime dt1 = DateTime.Now;
             Globals.ThisAddIn.Application.ScreenUpdating = false;
             string RetVal = "";
@@ -114,6 +115,8 @@ namespace Tango
             TabControl TbCtrl = AddTabCtrl("TabCtrl" + basePage, (int)((double)(P.Height) * 0.42), 0, P.Width, (int)((double)(P.Height) - CLB.Height));
     
             Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
+            Trev = docs.TrackRevisions;
+            docs.TrackRevisions = false;
             Microsoft.Office.Interop.Word.Range rng = docs.Content;
             rng.Find.ClearFormatting();
 
@@ -122,22 +125,26 @@ namespace Tango
             object[] repltext = ReplItem;
             int rng1count = 0;
             TabPage tp = new TabPage();
+            int PageNo = -1;
             for (int i = 0; i < findtext.Length; i++)
             {
+                PageNo++;
                 tp = new TabPage();
                 tp.Name = basePage + i.ToString();
                 tp.Text = findtext[i].ToString();
                 ((TabControl)TbCtrl).Controls.Add(tp);
 
                 CheckedListBox CLB1 = new CheckedListBox();
-                CLB1.Name = "TabCtrl" + basePage + "CLB_" + i.ToString();
+                CLB1.Name = "TabCtrl" + basePage + "CLB_" + PageNo.ToString();
                 CLB1.Width = CLB.Width;
                 CLB1.Height = (int)(double)(TbCtrl.Height * 0.99);
                 tp.Controls.Add(CLB1);
+                //MessageBox.Show(CLB1.Name);
                 
                 rng.Start = 0;
                 rng1count = 0;
                 rng.Find.Execute(ref findtext[i]);
+                //MessageBox.Show(findtext[i].ToString());
                 while (rng.Find.Found)
                 {
                     rng1count += 1;
@@ -155,6 +162,7 @@ namespace Tango
                 if (rng1count == 0)
                 {
                     TbCtrl.Controls.Remove(tp);
+                    PageNo--;
                 }
                 else
                 {
@@ -187,7 +195,8 @@ namespace Tango
             DateTime dt2 = DateTime.Now;
 
             TimeSpan dt = dt2 - dt1;
-            
+            docs.TrackRevisions = Trev;
+
             return RetVal;
         }
 
@@ -282,52 +291,37 @@ namespace Tango
             int tabIndex = tabControl1.SelectedIndex;
             string TName = "TabCtrlPage" + (tabIndex - 1).ToString();
             TabControl TC = GetCtrl(TName) as TabControl;
-            int Tindex = TC.SelectedIndex;
             string ClbNm = "CheckedListBox_Page" + (tabIndex - 1).ToString();
             CheckedListBox CLB = GetCtrl(ClbNm) as CheckedListBox;
             string ClbNm1 = "CheckedListBox_RPage" + (tabIndex - 1).ToString();
             CheckedListBox CLR = GetCtrl(ClbNm1) as CheckedListBox;
-            string CHkLBNm = TName + "CLB_" + Tindex;
-            CheckedListBox TabCL = GetCtrl(CHkLBNm) as CheckedListBox;
-            
-            bool SAll = (TabCL.Items.Count == TabCL.CheckedItems.Count);
-            Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
-            Microsoft.Office.Interop.Word.Range rng = docs.Content;
-            rng.Find.ClearFormatting();
-            string str1 = CLB.Items[Tindex].ToString();
-            int cx1 = str1.IndexOf("(", 0);
-            string str2 = str1.Substring(0, cx1).Trim();
-            object fText = str2; //"Sri Lanka";
-            object rText = CLR.Items[Tindex].ToString(); //"Canada";
-            if (SAll)
-            {
-                rng.Find.Text = fText.ToString();
-                rng.Find.Replacement.Text = rText.ToString();
-                rng.Find.Forward = true;
-                rng.Find.Wrap = Microsoft.Office.Interop.Word.WdFindWrap.wdFindContinue;
-                rng.Find.Format = false;
-                rng.Find.MatchCase = false;
-                rng.Find.MatchWholeWord = false;
-                rng.Find.MatchWildcards = false;
-                rng.Find.MatchSoundsLike = false;
-                rng.Find.MatchAllWordForms = false;
-                
-                rng.Find.Execute(Replace: Microsoft.Office.Interop.Word.WdReplace.wdReplaceAll);
+            List<Control> remotemall = new List<Control>();
+            List<int> remotemall1 = new List<int>();
+            TabPage pagename = new TabPage();
 
-                TC.Controls.RemoveAt(Tindex);
-                CLB.Items.RemoveAt(Tindex);
-            }
-            else
+            for (int Tindex= TC.TabCount - 1; Tindex >= 0; --Tindex)
             {
-                int i = 0;
-                List<int> remotem = new List<int>();
-                foreach (object itemChecked in TabCL.CheckedItems)
+                string CHkLBNm = TName + "CLB_" + Tindex;
+
+                CheckedListBox TabCL = GetCtrl(CHkLBNm) as CheckedListBox;
+
+                bool SAll = (TabCL.Items.Count == TabCL.CheckedItems.Count);
+                Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
+                bool Trev = docs.TrackRevisions;
+                docs.TrackRevisions = false;
+                Microsoft.Office.Interop.Word.Range rng = docs.Content;
+                rng.Find.ClearFormatting();
+                string str1 = CLB.Items[Tindex].ToString();
+                int cx1 = str1.IndexOf("(", 0);
+                string str2 = str1.Substring(0, cx1).Trim();
+                object fText = str2; //"Sri Lanka";
+                object rText = CLR.Items[Tindex].ToString(); //"Canada";
+                MessageBox.Show("Assigning tabpage name");
+                pagename = TC.TabPages[Tindex];
+                MessageBox.Show(pagename.ToString());
+                MessageBox.Show(Tindex.ToString());
+                if (SAll)
                 {
-                    Microsoft.Office.Interop.Word.Range rng1 = docs.Content;
-                    rng1.Find.Text = itemChecked.ToString();
-                    rng1.Find.Execute();
-                    rng1.Select();
-                    rng = (Globals.ThisAddIn.Application.Selection.Range.Sentences[1]);
                     rng.Find.Text = fText.ToString();
                     rng.Find.Replacement.Text = rText.ToString();
                     rng.Find.Forward = true;
@@ -338,47 +332,99 @@ namespace Tango
                     rng.Find.MatchWildcards = false;
                     rng.Find.MatchSoundsLike = false;
                     rng.Find.MatchAllWordForms = false;
-            
-                    rng.Find.Execute(Replace: Microsoft.Office.Interop.Word.WdReplace.wdReplaceOne);
-                    TabCL.FindString(itemChecked.ToString());
-                    int indextodel = TabCL.FindString(itemChecked.ToString());
-                    remotem.Add(indextodel);
-                    int countnum1 = CLB.Items[Tindex].ToString().IndexOf("(", 0);
-                    int countnum2 = CLB.Items[Tindex].ToString().IndexOf(")", 0);
 
-                    string nm = CLB.Items[Tindex].ToString().Substring(0, countnum1);
-                    string NumPart = CLB.Items[Tindex].ToString().Substring(countnum1 + 1, countnum2-countnum1 - 1).Trim();
-
-                    int countnum = int.Parse(NumPart) - 1;
-
-                    CLB.Items[Tindex] = nm + "( " + countnum.ToString() + " )";
-                    CLR.Items[Tindex] = countnum;
-                    rng = docs.Content;
-                    rng.Start = 0;
-                    rng.End=0;
-                    rng.Select();
+                    rng.Find.Execute(Replace: Microsoft.Office.Interop.Word.WdReplace.wdReplaceAll);
+                    remotemall.Add(pagename);
+                    remotemall1.Add(Tindex);
                 }
-                i++;
-                remotem.Sort();
-                remotem.Reverse();
-                foreach (int x in remotem.ToList())
+                else
                 {
-                    TabCL.Items.RemoveAt(x);
+                    int i = 0;
+                    List<int> remotem = new List<int>();
+                    foreach (object itemChecked in TabCL.CheckedItems)
+                    {
+                        Microsoft.Office.Interop.Word.Range rng1 = docs.Content;
+                        int len = itemChecked.ToString().Length;
+                        if (len < 254)
+                        {
+                            rng1.Find.Text = itemChecked.ToString();
+                        }else
+                        {
+                            rng1.Find.Text = itemChecked.ToString().Substring(0,254);
+                        }
+                        string txt111 = (rng1.Find.Text + "    ===>>    " + rng1.Find.Text.Length.ToString());
+                        rng1.Find.Execute();
+                        rng1.Select();
+                        rng = (Globals.ThisAddIn.Application.Selection.Range.Sentences[1]);
+                        rng.Find.Text = fText.ToString();
+                        rng.Find.Replacement.Text = rText.ToString();
+                        rng.Find.Forward = true;
+                        rng.Find.Wrap = Microsoft.Office.Interop.Word.WdFindWrap.wdFindContinue;
+                        rng.Find.Format = false;
+                        rng.Find.MatchCase = false;
+                        rng.Find.MatchWholeWord = false;
+                        rng.Find.MatchWildcards = false;
+                        rng.Find.MatchSoundsLike = false;
+                        rng.Find.MatchAllWordForms = false;
+
+                        rng.Find.Execute(Replace: Microsoft.Office.Interop.Word.WdReplace.wdReplaceOne);
+                        TabCL.FindString(itemChecked.ToString());
+                        int indextodel = TabCL.FindString(itemChecked.ToString());
+                        remotem.Add(indextodel);
+                        int countnum1 = CLB.Items[Tindex].ToString().IndexOf("(", 0);
+                        int countnum2 = CLB.Items[Tindex].ToString().IndexOf(")", 0);
+
+                        string nm = CLB.Items[Tindex].ToString().Substring(0, countnum1);
+                        string NumPart = CLB.Items[Tindex].ToString().Substring(countnum1 + 1, countnum2 - countnum1 - 1).Trim();
+
+                        int countnum = int.Parse(NumPart) - 1;
+
+                        CLB.Items[Tindex] = nm + "( " + countnum.ToString() + " )";
+                        CLR.Items[Tindex] = countnum;
+                        rng = docs.Content;
+                        rng.Start = 0;
+                        rng.End = 0;
+                        rng.Select();
+                    }
+                    i++;
+                    remotem.Sort();
+                    remotem.Reverse();
+                    foreach (int x in remotem.ToList())
+                    {
+                        TabCL.Items.RemoveAt(x);
+                    }
                 }
+                docs.TrackRevisions = Trev;
+            }
+            remotemall.Sort();
+            remotemall.Reverse();
+            foreach (Control x in remotemall.ToList())
+            {
+                MessageBox.Show(x.ToString());
+                TC.Controls.Remove(x);
+            }
+
+            remotemall1.Sort();
+            remotemall1.Reverse();
+            foreach (int x in remotemall1.ToList())
+            {
+                MessageBox.Show(x.ToString());
+                CLB.Items.RemoveAt(x);
             }
 
             string SumVal = "String Count Summary" + Environment.NewLine + Environment.NewLine;
 
             for(int i = 0; i < CLB.Items.Count; i++)
             {
-                str1 = CLB.Items[i].ToString();
-                cx1 = str1.IndexOf("(", 0);
-                str2 = str1.Substring(0, cx1).Trim();
+                string str1 = CLB.Items[i].ToString();
+                int cx1 = str1.IndexOf("(", 0);
+                string str2 = str1.Substring(0, cx1).Trim();
                 SumVal += str2 + " => Word Count : " + CLR.Items[i].ToString() + Environment.NewLine + Environment.NewLine;
             }
             TextBox txtBOX = GetCtrl("txtSummary") as TextBox;
             txtBOX.Text = "";
             txtBOX.AppendText(SumVal);
+
         }
 
         private void CheckedListBox_Click(object sender, EventArgs e)
@@ -389,7 +435,10 @@ namespace Tango
             CheckedListBox C1 = GetCtrl(sendName) as CheckedListBox;
             CheckedListBox CLB = (CheckedListBox)C1;
             Microsoft.Office.Interop.Word.Range rng1 = docs.Content;
+            string findText1 = CLB.SelectedItem.ToString();
             string findText = CLB.SelectedItem.ToString();
+            if (findText1.Length > 254) { findText = findText1.Substring(0, 254); }
+            //MessageBox.Show(findText + "    ===>>    " + findText.Length.ToString());
             string fText = findText.Trim();
             int scnt = findText.IndexOf("(", 0);
 
@@ -400,9 +449,11 @@ namespace Tango
 
             rng1.Start = 0;
             rng1.Find.Forward = true;
+            //MessageBox.Show("Highlight");
             rng1.Find.ClearHitHighlight();
             rng1.Find.HitHighlight(FindText: fText, MatchCase: false, HighlightColor: Microsoft.Office.Interop.Word.WdColor.wdColorBlue, TextColor: Microsoft.Office.Interop.Word.WdColor.wdColorWhite);
             rng1.Find.Execute();
+
             rng1.Select();
             bool chkd = !(CLB.GetItemChecked(CLB.SelectedIndex));
             if (MastListBox(sendName))
@@ -411,9 +462,6 @@ namespace Tango
                 string Cname = "TabCtrlPage" + (tabIndex - 1).ToString();
                 TabControl TC = GetCtrl(Cname) as TabControl;
                 TC.SelectTab(TIndex);
-            }else
-            {
-                CLB.SetItemChecked(CLB.SelectedIndex, chkd);
             }
         }
 
