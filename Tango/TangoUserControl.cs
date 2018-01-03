@@ -301,8 +301,14 @@ namespace Tango
 
             for (int Tindex= TC.TabCount - 1; Tindex >= 0; --Tindex)
             {
-                string CHkLBNm = TName + "CLB_" + Tindex;
+                TabPage TP = TC.TabPages[Tindex];
 
+                string CHkLBNm = TName + "CLB_" + Tindex;
+                foreach (Control tpc in TP.Controls)
+                {
+                    CHkLBNm = tpc.Name.ToString();
+                }
+                
                 CheckedListBox TabCL = GetCtrl(CHkLBNm) as CheckedListBox;
 
                 bool SAll = (TabCL.Items.Count == TabCL.CheckedItems.Count);
