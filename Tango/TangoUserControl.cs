@@ -322,10 +322,7 @@ namespace Tango
                 string str2 = str1.Substring(0, cx1).Trim();
                 object fText = str2; //"Sri Lanka";
                 object rText = CLR.Items[Tindex].ToString(); //"Canada";
-                MessageBox.Show("Assigning tabpage name");
                 pagename = TC.TabPages[Tindex];
-                MessageBox.Show(pagename.ToString());
-                MessageBox.Show(Tindex.ToString());
                 if (SAll)
                 {
                     rng.Find.Text = fText.ToString();
@@ -406,7 +403,6 @@ namespace Tango
             remotemall.Reverse();
             foreach (Control x in remotemall.ToList())
             {
-                MessageBox.Show(x.ToString());
                 TC.Controls.Remove(x);
             }
 
@@ -414,7 +410,6 @@ namespace Tango
             remotemall1.Reverse();
             foreach (int x in remotemall1.ToList())
             {
-                MessageBox.Show(x.ToString());
                 CLB.Items.RemoveAt(x);
             }
 
