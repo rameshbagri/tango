@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button2 = new System.Windows.Forms.Button();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.btnSelectAll = new System.Windows.Forms.Button();
             this.btnExecute = new System.Windows.Forms.Button();
@@ -38,19 +39,20 @@
             this.pnlFunctionList = new System.Windows.Forms.Panel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.HomePage = new System.Windows.Forms.TabPage();
-            this.btnProcess = new System.Windows.Forms.Button();
+            this.BtnProcess = new System.Windows.Forms.Button();
             this.checkBox6 = new System.Windows.Forms.CheckBox();
             this.checkBox5 = new System.Windows.Forms.CheckBox();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.button2 = new System.Windows.Forms.Button();
+            this.eventLog1 = new System.Diagnostics.EventLog();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.pnlFunctionList.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.HomePage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -61,6 +63,17 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(302, 31);
             this.panel1.TabIndex = 1;
+            // 
+            // button2
+            // 
+            this.button2.Enabled = false;
+            this.button2.Location = new System.Drawing.Point(197, 4);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 1;
+            this.button2.Text = "Select All";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // comboBox1
             // 
@@ -84,6 +97,7 @@
             // 
             // btnExecute
             // 
+            this.btnExecute.Enabled = false;
             this.btnExecute.Location = new System.Drawing.Point(153, 11);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(61, 23);
@@ -144,7 +158,7 @@
             // 
             // HomePage
             // 
-            this.HomePage.Controls.Add(this.btnProcess);
+            this.HomePage.Controls.Add(this.BtnProcess);
             this.HomePage.Controls.Add(this.checkBox6);
             this.HomePage.Controls.Add(this.checkBox5);
             this.HomePage.Controls.Add(this.checkBox4);
@@ -159,16 +173,20 @@
             this.HomePage.Text = "Home";
             this.HomePage.UseVisualStyleBackColor = true;
             // 
-            // btnProcess
+            // BtnProcess
             // 
-            this.btnProcess.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnProcess.Location = new System.Drawing.Point(49, 207);
-            this.btnProcess.Name = "btnProcess";
-            this.btnProcess.Size = new System.Drawing.Size(123, 28);
-            this.btnProcess.TabIndex = 27;
-            this.btnProcess.Text = "Process";
-            this.btnProcess.UseVisualStyleBackColor = true;
-            this.btnProcess.Click += new System.EventHandler(this.btnProcess_Click_1);
+            this.BtnProcess.Enabled = false;
+            this.BtnProcess.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Blue;
+            this.BtnProcess.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
+            this.BtnProcess.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BtnProcess.ForeColor = System.Drawing.Color.Firebrick;
+            this.BtnProcess.Location = new System.Drawing.Point(49, 207);
+            this.BtnProcess.Name = "BtnProcess";
+            this.BtnProcess.Size = new System.Drawing.Size(123, 28);
+            this.BtnProcess.TabIndex = 27;
+            this.BtnProcess.Text = "Process";
+            this.BtnProcess.UseVisualStyleBackColor = true;
+            this.BtnProcess.Click += new System.EventHandler(this.btnProcess_Click_1);
             // 
             // checkBox6
             // 
@@ -180,6 +198,7 @@
             this.checkBox6.TabIndex = 26;
             this.checkBox6.Text = "Function 6";
             this.checkBox6.UseVisualStyleBackColor = true;
+            this.checkBox6.CheckedChanged += new System.EventHandler(this.checkBoxCheckedChanged);
             // 
             // checkBox5
             // 
@@ -191,6 +210,7 @@
             this.checkBox5.TabIndex = 25;
             this.checkBox5.Text = "Function 5";
             this.checkBox5.UseVisualStyleBackColor = true;
+            this.checkBox5.CheckedChanged += new System.EventHandler(this.checkBoxCheckedChanged);
             // 
             // checkBox4
             // 
@@ -202,6 +222,7 @@
             this.checkBox4.TabIndex = 24;
             this.checkBox4.Text = "Function 4";
             this.checkBox4.UseVisualStyleBackColor = true;
+            this.checkBox4.CheckedChanged += new System.EventHandler(this.checkBoxCheckedChanged);
             // 
             // checkBox3
             // 
@@ -213,6 +234,7 @@
             this.checkBox3.TabIndex = 23;
             this.checkBox3.Text = "Function 3";
             this.checkBox3.UseVisualStyleBackColor = true;
+            this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBoxCheckedChanged);
             // 
             // checkBox2
             // 
@@ -224,6 +246,7 @@
             this.checkBox2.TabIndex = 22;
             this.checkBox2.Text = "Wicket => Bucket";
             this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBoxCheckedChanged);
             // 
             // checkBox1
             // 
@@ -235,16 +258,12 @@
             this.checkBox1.TabIndex = 21;
             this.checkBox1.Text = "Find / Replace";
             this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBoxCheckedChanged);
             // 
-            // button2
+            // eventLog1
             // 
-            this.button2.Location = new System.Drawing.Point(197, 4);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Select All";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.eventLog1.SynchronizingObject = this;
+            this.eventLog1.EntryWritten += new System.Diagnostics.EntryWrittenEventHandler(this.eventLog1_EntryWritten);
             // 
             // TangoUserControl
             // 
@@ -262,6 +281,7 @@
             this.tabControl1.ResumeLayout(false);
             this.HomePage.ResumeLayout(false);
             this.HomePage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -276,7 +296,7 @@
         private System.Windows.Forms.Panel pnlFunctionList;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage HomePage;
-        private System.Windows.Forms.Button btnProcess;
+        private System.Windows.Forms.Button BtnProcess;
         private System.Windows.Forms.CheckBox checkBox6;
         private System.Windows.Forms.CheckBox checkBox5;
         private System.Windows.Forms.CheckBox checkBox4;
@@ -285,5 +305,6 @@
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
+        private System.Diagnostics.EventLog eventLog1;
     }
 }
