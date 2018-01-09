@@ -436,7 +436,12 @@ namespace Tango
                         {
                             TabCL.Items.RemoveAt(it);
                         }
+                        TabCL.Refresh();
+                        CheckedListBox TCL = AddSummary1C(fText);
+                        MessageBox.Show("TCL Count is : " + TCL.Items.Count.ToString());
                         TabCL = AddSummary1C(fText);
+                        MessageBox.Show("TabCL Count is : " + TabCL.Items.Count.ToString());
+                        TabCL.Refresh();
                     }
                     //foreach (int x in remotem.ToList())
                     //{
@@ -490,6 +495,8 @@ namespace Tango
             string findText = CLB.SelectedItem.ToString();
             if (findText1.Length > 254) { findText = findText1.Substring(0, 254); }
             string fText = findText.Trim();
+            int scnt = findText.IndexOf("(", 0);
+            if (scnt > 0){fText = (findText.Substring(0, scnt)).Trim();}
 
             rng1.Start = 0;
             rng1.Find.Forward = true;
@@ -1059,7 +1066,7 @@ namespace Tango
 
             object findtext = v;
             int rng1count = 0;
-            CheckedListBox CLB1 = new CheckedListBox();
+            CheckedListBox CLB1A = new CheckedListBox();
             rng.Start = 0;
             rng1count = 0;
             rng.Find.Execute(ref findtext);
@@ -1071,16 +1078,13 @@ namespace Tango
                 string setence = (Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
                 if (setence.Length > findtext.ToString().Length)
                 {
-                    CLB1.Items.Add(Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
+                    CLB1A.Items.Add(Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
                 }
             }
             Globals.ThisAddIn.Application.ScreenUpdating = true;
             rng.Start = 0;
             docs.TrackRevisions = Trev;
-            MessageBox.Show(CLB1.Items.Count.ToString());
-            CheckedListBox RetVal = CLB1;
-
-            return RetVal;
+            return CLB1A;
         }
     }
 }
