@@ -35,7 +35,6 @@
             this.btnExecute = new System.Windows.Forms.Button();
             this.btnReser = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
             this.pnlFunctionList = new System.Windows.Forms.Panel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.HomePage = new System.Windows.Forms.TabPage();
@@ -46,17 +45,19 @@
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.eventLog1 = new System.Diagnostics.EventLog();
+            this.button1 = new System.Windows.Forms.Button();
+            this.CmdRep = new System.Windows.Forms.Button();
+            this.LstEvents = new System.Windows.Forms.ListBox();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.pnlFunctionList.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.HomePage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.CmdRep);
             this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.comboBox1);
             this.panel1.Location = new System.Drawing.Point(4, 4);
@@ -67,9 +68,9 @@
             // button2
             // 
             this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(197, 4);
+            this.button2.Location = new System.Drawing.Point(169, 3);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.Size = new System.Drawing.Size(65, 23);
             this.button2.TabIndex = 1;
             this.button2.Text = "Select All";
             this.button2.UseVisualStyleBackColor = true;
@@ -81,7 +82,7 @@
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(6, 4);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(177, 21);
+            this.comboBox1.Size = new System.Drawing.Size(157, 21);
             this.comboBox1.TabIndex = 0;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
@@ -122,20 +123,10 @@
             this.panel2.Controls.Add(this.btnReser);
             this.panel2.Controls.Add(this.btnExecute);
             this.panel2.Controls.Add(this.btnSelectAll);
-            this.panel2.Location = new System.Drawing.Point(11, 460);
+            this.panel2.Location = new System.Drawing.Point(4, 460);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(295, 44);
+            this.panel2.Size = new System.Drawing.Size(302, 44);
             this.panel2.TabIndex = 2;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(72, 11);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "UnSelect All";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // pnlFunctionList
             // 
@@ -143,7 +134,7 @@
             this.pnlFunctionList.Controls.Add(this.tabControl1);
             this.pnlFunctionList.Location = new System.Drawing.Point(4, 41);
             this.pnlFunctionList.Name = "pnlFunctionList";
-            this.pnlFunctionList.Size = new System.Drawing.Size(302, 413);
+            this.pnlFunctionList.Size = new System.Drawing.Size(316, 413);
             this.pnlFunctionList.TabIndex = 3;
             // 
             // tabControl1
@@ -260,20 +251,45 @@
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBoxCheckedChanged);
             // 
-            // eventLog1
+            // button1
             // 
-            this.eventLog1.SynchronizingObject = this;
-            this.eventLog1.EntryWritten += new System.Diagnostics.EntryWrittenEventHandler(this.eventLog1_EntryWritten);
+            this.button1.Location = new System.Drawing.Point(72, 11);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 3;
+            this.button1.Text = "UnSelect All";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // CmdRep
+            // 
+            this.CmdRep.Location = new System.Drawing.Point(241, 1);
+            this.CmdRep.Name = "CmdRep";
+            this.CmdRep.Size = new System.Drawing.Size(58, 23);
+            this.CmdRep.TabIndex = 2;
+            this.CmdRep.Text = "Report";
+            this.CmdRep.UseVisualStyleBackColor = true;
+            this.CmdRep.Click += new System.EventHandler(this.CmdRep_Click);
+            // 
+            // LstEvents
+            // 
+            this.LstEvents.FormattingEnabled = true;
+            this.LstEvents.Location = new System.Drawing.Point(11, 412);
+            this.LstEvents.Name = "LstEvents";
+            this.LstEvents.Size = new System.Drawing.Size(11, 30);
+            this.LstEvents.TabIndex = 4;
+            this.LstEvents.Visible = false;
             // 
             // TangoUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.LstEvents);
             this.Controls.Add(this.pnlFunctionList);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Name = "TangoUserControl";
-            this.Size = new System.Drawing.Size(313, 507);
+            this.Size = new System.Drawing.Size(320, 507);
             this.Resize += new System.EventHandler(this.TangoUserControl_Resize);
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
@@ -281,7 +297,6 @@
             this.tabControl1.ResumeLayout(false);
             this.HomePage.ResumeLayout(false);
             this.HomePage.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -303,8 +318,9 @@
         private System.Windows.Forms.CheckBox checkBox3;
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
-        private System.Diagnostics.EventLog eventLog1;
+        private System.Windows.Forms.Button CmdRep;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.ListBox LstEvents;
     }
 }

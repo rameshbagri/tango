@@ -24,10 +24,12 @@ namespace Tango
             tabControl1.Width = (int)(double)(tabControl1.Parent.Width * .95);
             panel1.Width = (int)(double)(panel1.Parent.Width * .95);
             panel2.Width = (int)(double)(panel2.Parent.Width * .95);
-            comboBox1.Width = (int)(double)(comboBox1.Parent.Width * .55);
+            comboBox1.Width = (int)(double)(comboBox1.Parent.Width * .5);
             comboBox1.Left = 0;
-            button2.Width = (int)(double)(button2.Parent.Width * .4);
-            button2.Left = (int)(double)(button2.Parent.Width * .58); ;
+            button2.Width = (int)(double)(button2.Parent.Width * .22);
+            button2.Left = (int)(double)(button2.Parent.Width * .52); ;
+            CmdRep.Width = (int)(double)(button2.Parent.Width * .22);
+            CmdRep.Left = (int)(double)(button2.Parent.Width * .75); ;
             btnSelectAll.Width = (int)(double)(btnSelectAll.Parent.Width * .23);
             button1.Width = (int)(double)(button1.Parent.Width * .23);
             btnExecute.Width = (int)(double)(btnExecute.Parent.Width * .23);
@@ -36,12 +38,10 @@ namespace Tango
             button1.Left = (int)(double)(button1.Parent.Width * .25);
             btnExecute.Left = (int)(double)(btnExecute.Parent.Width * .51);
             btnReser.Left = (int)(double)(btnReser.Parent.Width * .76);
-            eventLog1.Source = "TangoEvent";
         }
 
         private void btnProcess_Click_1(object sender, EventArgs e)
         {
-            //eventLog1.WriteEntry(((Button)sender).Name.ToString() + " clicked");
             comboBox1.Items.Add("Home");
             Control CLB = GetCtrl("tabControl1");
 
@@ -88,6 +88,8 @@ namespace Tango
             TabPage t = new TabPage();
             tabControl1.SelectedIndex = 1;
             btnExecute.Enabled = false;
+            LstEvents.Items.Add(((Button)sender).Name.ToString() + " clicked");
+            LstEvents.Items.Add(" ====> " + ((Button)sender).Text.ToString() + " clicked");
         }
 
         private string AddSummary1A(string basePage, string addPage, object[] srchItem, object[] ReplItem)
@@ -205,7 +207,7 @@ namespace Tango
 
         private void CLB1_ItemCheck(object sender, ItemCheckEventArgs e)
         {
-            //eventLog1.WriteEntry(((CheckedListBox)sender).Name.ToString() + " bottom part clicked");
+            LstEvents.Items.Add(((CheckedListBox)sender).Name.ToString() + " bottom part clicked");
             btnExecute.Enabled = false;
             int tabIndex = tabControl1.SelectedIndex;
             string TName = "TabCtrlPage" + (tabIndex - 1).ToString();
@@ -238,7 +240,7 @@ namespace Tango
 
         private void CheckedListBox_ItemCheck(object sender, ItemCheckEventArgs e)
         {
-            //eventLog1.WriteEntry(((CheckedListBox)sender).Name.ToString() + " Top part clicked");
+            LstEvents.Items.Add(((CheckedListBox)sender).Name.ToString() + " Top part clicked");
             CheckState chkstat = e.NewValue;
             bool cstat = true;
             if (chkstat.ToString().ToUpper().Equals("UNCHECKED"))
@@ -324,7 +326,6 @@ namespace Tango
 
         private void btnExecute_Click(object sender, EventArgs e)
         {
-            //eventLog1.WriteEntry(((Button)sender).Name.ToString() + " clicked");
             int tabIndex = tabControl1.SelectedIndex;
             string TName = "TabCtrlPage" + (tabIndex - 1).ToString();
             TabControl TC = GetCtrl(TName) as TabControl;
@@ -428,26 +429,32 @@ namespace Tango
                         rng.Select();
                     }
                     i++;
-                    remotem.Sort();
-                    remotem.Reverse();
+                    //remotem.Sort();
+                    //remotem.Reverse();
                     if (remotem.ToList().Count > 0)
                     {
-                        for(int it = TabCL.Items.Count- 1; it>=0;  it-- )
+                        for (int it = TabCL.Items.Count - 1; it >= 0; it--)
                         {
                             TabCL.Items.RemoveAt(it);
                         }
                         TabCL.Refresh();
-                        CheckedListBox TCL = AddSummary1C(fText);
-                        MessageBox.Show("TCL Count is : " + TCL.Items.Count.ToString());
-                        TabCL = AddSummary1C(fText);
-                        MessageBox.Show("TabCL Count is : " + TabCL.Items.Count.ToString());
+
+                        rng = docs.Content;
+                        rng.Find.ClearFormatting();
+                        rng.Start = 0;
+                        rng.Find.Execute(ref fText);
+                        while (rng.Find.Found)
+                        {
+                            rng.Find.Execute(ref fText);
+                            rng.Select();
+                            string setence = (Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
+                            if (setence.Length > fText.ToString().Length)
+                            {
+                                TabCL.Items.Add(Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
+                            }
+                        }
                         TabCL.Refresh();
                     }
-                    //foreach (int x in remotem.ToList())
-                    //{
-                    //    TabCL.Items.RemoveAt(x);
-                    //}
-
                 }
                 docs.TrackRevisions = Trev;
             }
@@ -480,11 +487,12 @@ namespace Tango
             txtBOX.Text = "";
             txtBOX.AppendText(SumVal);
             btnExecute.Enabled = false;
+            LstEvents.Items.Add(((Button)sender).Name.ToString() + " clicked");
+            LstEvents.Items.Add(" ====> " + ((Button)sender).Text.ToString() + " clicked");
         }
 
         private void CheckedListBox_Click(object sender, EventArgs e)
         {
-            //eventLog1.WriteEntry(((CheckedListBox)sender).Name.ToString() + " clicked");
             int tabIndex = tabControl1.SelectedIndex;
             string sendName = ((CheckedListBox)sender).Name;
             Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
@@ -496,7 +504,7 @@ namespace Tango
             if (findText1.Length > 254) { findText = findText1.Substring(0, 254); }
             string fText = findText.Trim();
             int scnt = findText.IndexOf("(", 0);
-            if (scnt > 0){fText = (findText.Substring(0, scnt)).Trim();}
+            if (scnt > 0) { fText = (findText.Substring(0, scnt)).Trim(); }
 
             rng1.Start = 0;
             rng1.Find.Forward = true;
@@ -513,6 +521,8 @@ namespace Tango
                 TabControl TC = GetCtrl(Cname) as TabControl;
                 TC.SelectTab(TIndex);
             }
+            LstEvents.Items.Add(((CheckedListBox)sender).Name.ToString() + " clicked");
+            LstEvents.Items.Add(" ====> " + ((CheckedListBox)sender).Text.ToString() + " clicked");
         }
         private bool MastListBox(string sendName)
         {
@@ -540,7 +550,6 @@ namespace Tango
         }
         private void button2_Click(object sender, EventArgs e)
         {
-            //eventLog1.WriteEntry(((Button)sender).Name.ToString() + " clicked");
             int tabIndex = tabControl1.SelectedIndex;
             bool TF = true;
             if (button2.Text == "Select All")
@@ -563,11 +572,12 @@ namespace Tango
                 {
                     ((CheckedListBox)CBL).SetItemChecked(i, TF);
                 }
+                LstEvents.Items.Add(((Button)sender).Name.ToString() + " clicked");
+                LstEvents.Items.Add(" ====> " + ((Button)sender).Text.ToString() + " clicked");
             }
         }
         private void btnSelectAll_Click(object sender, EventArgs e)
         {
-            //eventLog1.WriteEntry(((Button)sender).Name.ToString() + " clicked");
             int tabIndex = tabControl1.SelectedIndex;
             //MessageBox.Show(tabIndex.ToString());
             if (tabIndex == 0)
@@ -596,10 +606,11 @@ namespace Tango
                     ((CheckedListBox)TabCL).SetItemChecked(i, true);
                 }
             }
+            LstEvents.Items.Add(((Button)sender).Name.ToString() + " clicked");
+            LstEvents.Items.Add(" ====> " + ((Button)sender).Text.ToString() + " clicked");
         }
         private void btnReser_Click(object sender, EventArgs e)
         {
-            //eventLog1.WriteEntry(((Button)sender).Name.ToString() + " clicked");
             TabControl TbCtrl = (TabControl)GetCtrl("tabControl1");
             foreach (TabPage Page in TbCtrl.TabPages)
             {
@@ -615,8 +626,9 @@ namespace Tango
                 checkBox4.Checked = false;
                 checkBox5.Checked = false;
                 checkBox6.Checked = false;
-
             }
+            LstEvents.Items.Add(((Button)sender).Name.ToString() + " clicked");
+            LstEvents.Items.Add(" ====> " + ((Button)sender).Text.ToString() + " clicked");
         }
         private Panel AddPanel(string name, int top, int left, int wid, int H)
         {
@@ -970,22 +982,23 @@ namespace Tango
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //eventLog1.WriteEntry(((TabControl)sender).Name.ToString() + " clicked");
             int index = tabControl1.SelectedIndex;
             button2.Enabled = true;
             if (index < 2) { btnExecute.Enabled = false; button2.Enabled = false; }
+            LstEvents.Items.Add(((TabControl)sender).Name.ToString() + " clicked");
+            LstEvents.Items.Add(" ====> " + ((TabControl)sender).Text.ToString() + " clicked");
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //eventLog1.WriteEntry(((ComboBox)sender).Name.ToString() + " clicked");
             int index = comboBox1.SelectedIndex;
             tabControl1.SelectedIndex = index;
+            LstEvents.Items.Add(((ComboBox)sender).Name.ToString() + " clicked");
+            LstEvents.Items.Add(" ====> " + ((ComboBox)sender).Text.ToString() + " clicked");
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //eventLog1.WriteEntry(((Button)sender).Name.ToString() + " clicked");
             int tabIndex = tabControl1.SelectedIndex;
             //MessageBox.Show(tabIndex.ToString());
             if (tabIndex == 0)
@@ -1015,6 +1028,8 @@ namespace Tango
                     ((CheckedListBox)TabCL).SetItemChecked(i, false);
                 }
             }
+            LstEvents.Items.Add(((Button)sender).Name.ToString() + " clicked");
+            LstEvents.Items.Add(" ====> " + ((Button)sender).Text.ToString() + " clicked");
         }
 
         private void TangoUserControl_Resize(object sender, EventArgs e)
@@ -1023,10 +1038,12 @@ namespace Tango
             tabControl1.Width = (int)(double)(tabControl1.Parent.Width * .95);
             panel1.Width = (int)(double)(panel1.Parent.Width * .95);
             panel2.Width = (int)(double)(panel2.Parent.Width * .95);
-            comboBox1.Width = (int)(double)(comboBox1.Parent.Width * .55);
+            comboBox1.Width = (int)(double)(comboBox1.Parent.Width * .5);
             comboBox1.Left = 0;
-            button2.Width = (int)(double)(button2.Parent.Width * .4);
-            button2.Left = (int)(double)(button2.Parent.Width * .58); ;
+            button2.Width = (int)(double)(button2.Parent.Width * .22);
+            button2.Left = (int)(double)(button2.Parent.Width * .52); ;
+            CmdRep.Width = (int)(double)(button2.Parent.Width * .22);
+            CmdRep.Left = (int)(double)(button2.Parent.Width * .75); ;
             btnSelectAll.Width = (int)(double)(btnSelectAll.Parent.Width * .23);
             button1.Width = (int)(double)(button1.Parent.Width * .23);
             btnExecute.Width = (int)(double)(btnExecute.Parent.Width * .23);
@@ -1039,7 +1056,7 @@ namespace Tango
 
         private void checkBoxCheckedChanged(object sender, EventArgs e)
         {
-            //eventLog1.WriteEntry(((CheckBox)sender).Name.ToString() + " clicked");
+            LstEvents.Items.Add(((CheckBox)sender).Name.ToString() + " clicked");
             BtnProcess.Enabled = false;
             if (checkBox1.Checked) { BtnProcess.Enabled = true; }
             if (checkBox2.Checked) { BtnProcess.Enabled = true; }
@@ -1049,42 +1066,22 @@ namespace Tango
             if (checkBox6.Checked) { BtnProcess.Enabled = true; }
         }
 
-        private void eventLog1_EntryWritten(object sender, System.Diagnostics.EntryWrittenEventArgs e)
+        private void CmdRep_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(eventLog1.ToString());
-        }
-
-        private CheckedListBox AddSummary1C(Object v)
-        {
-            Globals.ThisAddIn.Application.ScreenUpdating = false;
-
-            Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
-            Microsoft.Office.Interop.Word.Range rng = docs.Content;
-            bool Trev = docs.TrackRevisions;
-            docs.TrackRevisions = false;
-            rng.Find.ClearFormatting();
-
-            object findtext = v;
-            int rng1count = 0;
-            CheckedListBox CLB1A = new CheckedListBox();
-            rng.Start = 0;
-            rng1count = 0;
-            rng.Find.Execute(ref findtext);
-            while (rng.Find.Found)
+            if(CmdRep.Text.Equals("Report"))
             {
-                rng1count += 1;
-                rng.Find.Execute(ref findtext);
-                rng.Select();
-                string setence = (Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
-                if (setence.Length > findtext.ToString().Length)
-                {
-                    CLB1A.Items.Add(Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
-                }
+                CmdRep.Text = "Hide Report";
+                tabControl1.Visible = false;
+                LstEvents.Width = (int)(double)(tabControl1.Parent.Width * .95);
+                LstEvents.Height = (int)(double)(tabControl1.Parent.Height * .8);
+                LstEvents.Top = 100;
+                LstEvents.Visible = true;
             }
-            Globals.ThisAddIn.Application.ScreenUpdating = true;
-            rng.Start = 0;
-            docs.TrackRevisions = Trev;
-            return CLB1A;
+            else
+            {
+                CmdRep.Text = "Report";
+                tabControl1.Visible = true;
+            }
         }
     }
 }
