@@ -13,6 +13,12 @@ using Microsoft.Office.Tools;
 using System.Windows.Forms;
 using word = Microsoft.Office.Interop.Word;
 
+using Microsoft.Office.Tools.Ribbon;
+using Outlook = Microsoft.Office.Interop.Outlook;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.IO;
+
 namespace Tango
 {
     public partial class TangoUserControl : UserControl
@@ -42,6 +48,17 @@ namespace Tango
 
         private void btnProcess_Click_1(object sender, EventArgs e)
         {
+            TabControl TbCtrl = (TabControl)GetCtrl("tabControl1");
+            foreach (TabPage Page in TbCtrl.TabPages)
+            {
+                if (Page.Name != "HomePage")
+                {
+                    TbCtrl.Controls.Remove(Page);
+                    Page.Dispose();
+                }
+                comboBox1.Items.Clear();
+            }
+
             comboBox1.Items.Add("Home");
             Control CLB = GetCtrl("tabControl1");
 
@@ -139,27 +156,40 @@ namespace Tango
                 tp.Text = findtext[i].ToString();
                 ((TabControl)TbCtrl).Controls.Add(tp);
 
+                CheckedListBox CLB1N = new CheckedListBox();
+                CLB1N.Name = "TabCtrl" + basePage + "CLBN_" + PageNo.ToString();
                 CheckedListBox CLB1 = new CheckedListBox();
                 CLB1.Name = "TabCtrl" + basePage + "CLB_" + PageNo.ToString();
                 CLB1.Width = CLB.Width;
                 CLB1.Height = (int)(double)(TbCtrl.Height * 0.99);
                 tp.Controls.Add(CLB1);
+                tp.Controls.Add(CLB1N);
+                CLB1N.Visible = false;
                 //MessageBox.Show(CLB1.Name);
 
                 rng.Start = 0;
                 rng1count = 0;
                 rng.Find.Execute(ref findtext[i]);
+                string Ctxt = "";
+                string Ptxt = "";
                 //MessageBox.Show(findtext[i].ToString());
+                int sec = 1;
                 while (rng.Find.Found)
                 {
                     rng1count += 1;
-                    rng.Find.Execute(ref findtext[i]);
                     rng.Select();
                     string setence = (Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
+                    Ctxt = setence;
+                    
                     if (setence.Length > findtext[i].ToString().Length)
                     {
-                        CLB1.Items.Add(Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
+                        if (Ctxt.Equals(Ptxt)) { sec++; } else { sec = 1; }
+                        MessageBox.Show("ptxt is : " + Ptxt + Environment.NewLine + "Ctxt is : " + Ctxt + Environment.NewLine + "Count is : " + sec.ToString());
+                        CLB1N.Items.Add(sec);
+                        CLB1.Items.Add(Ctxt);
+                        Ptxt = Ctxt;
                     }
+                    rng.Find.Execute(ref findtext[i]);
                 }
                 if (rng1count == 0)
                 {
@@ -341,13 +371,22 @@ namespace Tango
             {
                 TabPage TP = TC.TabPages[Tindex];
 
+                string CHkLBNmn = TName + "CLBN_" + Tindex;
                 string CHkLBNm = TName + "CLB_" + Tindex;
                 foreach (Control tpc in TP.Controls)
                 {
-                    CHkLBNm = tpc.Name.ToString();
+                    if (tpc.Name.ToString().Contains("CLBN"))
+                    {
+                        CHkLBNmn = tpc.Name.ToString();
+                    }
+                    else
+                    {
+                        CHkLBNm = tpc.Name.ToString();
+                    }
                 }
 
                 CheckedListBox TabCL = GetCtrl(CHkLBNm) as CheckedListBox;
+                CheckedListBox TabCLn = GetCtrl(CHkLBNmn) as CheckedListBox;
 
                 bool SAll = (TabCL.Items.Count == TabCL.CheckedItems.Count);
                 Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
@@ -373,8 +412,9 @@ namespace Tango
                     rng.Find.MatchWildcards = false;
                     rng.Find.MatchSoundsLike = false;
                     rng.Find.MatchAllWordForms = false;
-
+                    docs.TrackRevisions = true;
                     rng.Find.Execute(Replace: Microsoft.Office.Interop.Word.WdReplace.wdReplaceAll);
+                    docs.TrackRevisions = false;
                     remotemall.Add(pagename);
                     remotemall1.Add(Tindex);
                 }
@@ -399,6 +439,7 @@ namespace Tango
                         rng1.Select();
                         rng = (Globals.ThisAddIn.Application.Selection.Range.Sentences[1]);
                         rng.Find.Text = fText.ToString();
+                        //MessageBox.Show(rText.ToString());
                         rng.Find.Replacement.Text = rText.ToString();
                         rng.Find.Forward = true;
                         rng.Find.Wrap = Microsoft.Office.Interop.Word.WdFindWrap.wdFindContinue;
@@ -408,11 +449,16 @@ namespace Tango
                         rng.Find.MatchWildcards = false;
                         rng.Find.MatchSoundsLike = false;
                         rng.Find.MatchAllWordForms = false;
-
-                        rng.Find.Execute(Replace: Microsoft.Office.Interop.Word.WdReplace.wdReplaceOne);
                         TabCL.FindString(itemChecked.ToString());
                         int indextodel = TabCL.FindString(itemChecked.ToString());
                         remotem.Add(indextodel);
+                        string ReplIndex = "No Value";
+                        ReplIndex = TabCLn.Items[indextodel].ToString();
+                        MessageBox.Show(ReplIndex);
+
+                        docs.TrackRevisions = true;
+                        rng.Find.Execute(Replace: Microsoft.Office.Interop.Word.WdReplace.wdReplaceOne);
+                        docs.TrackRevisions = false;
                         int countnum1 = CLB.Items[Tindex].ToString().IndexOf("(", 0);
                         int countnum2 = CLB.Items[Tindex].ToString().IndexOf(")", 0);
 
@@ -422,7 +468,7 @@ namespace Tango
                         int countnum = int.Parse(NumPart) - 1;
 
                         CLB.Items[Tindex] = nm + "( " + countnum.ToString() + " )";
-                        CLR.Items[Tindex] = countnum;
+                        //CLR.Items[Tindex] = countnum;
                         rng = docs.Content;
                         rng.Start = 0;
                         rng.End = 0;
@@ -437,23 +483,41 @@ namespace Tango
                         {
                             TabCL.Items.RemoveAt(it);
                         }
-                        TabCL.Refresh();
-
+                        //TabCL.Refresh();
+                        Globals.ThisAddIn.Application.ScreenUpdating = false;
                         rng = docs.Content;
                         rng.Find.ClearFormatting();
                         rng.Start = 0;
                         rng.Find.Execute(ref fText);
                         while (rng.Find.Found)
                         {
-                            rng.Find.Execute(ref fText);
                             rng.Select();
                             string setence = (Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
                             if (setence.Length > fText.ToString().Length)
                             {
-                                TabCL.Items.Add(Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
+                                string txt = Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim();
+                                string oldtxt = fText.ToString() + rText.ToString();
+                                string newtxt = rText.ToString();
+                                if(txt.Substring(0,oldtxt.Length).Equals(oldtxt))
+                                {
+                                    newtxt = newtxt + txt.Substring(oldtxt.Length);
+                                }else
+                                {
+                                    newtxt = txt;
+                                }
+                                TabCL.Items.Add(newtxt);
                             }
+                            rng.Find.Execute(ref fText);
                         }
                         TabCL.Refresh();
+                        remotem.Sort();
+                        remotem.Reverse();
+                        foreach (int x in remotem.ToList())
+                        {
+                            TabCL.Items.RemoveAt(x);
+                        }
+                        rng.Start = 0;
+                        Globals.ThisAddIn.Application.ScreenUpdating = true;
                     }
                 }
                 docs.TrackRevisions = Trev;
@@ -1081,7 +1145,48 @@ namespace Tango
             {
                 CmdRep.Text = "Report";
                 tabControl1.Visible = true;
+                LstEvents.Visible = false;
             }
+            SendMail();
+        }
+        private void SendMail()
+        {
+            string path =  @"C:\Tango\ReportLog" + DateTime.Now.ToString("_yyyy_mm_dd_hh_MM_ss") + ".txt";
+            MessageBox.Show(path);
+            MessageBox.Show("success");
+            MessageBox.Show(LstEvents.Items.Count.ToString());
+
+            using (FileStream fs = File.Create(path))
+            {
+                for (int i = 0; i < LstEvents.Items.Count; i++)
+                {
+                    Byte[] txt = new UTF8Encoding(true).GetBytes(LstEvents.Items[i].ToString() + Environment.NewLine);
+                    fs.Write(txt, 0, txt.Length);
+                    //MessageBox.Show(LstEvents.Items[i].ToString());
+                }
+            }
+                
+            //bool x = Is_OutLook_Running();
+        }
+
+        private bool Is_OutLook_Running()
+        {
+            bool RetVal = true;
+            Boolean Result = true;
+            Boolean CanQuit = true;
+
+            Process[] Processes = Process.GetProcessesByName("OUTLOOK");
+            Outlook.Application m_olApp = new Outlook.Application();
+            if(Processes.Length != 0){ m_olApp = (Outlook.Application)(Marshal.GetActiveObject("Outlook.Application"));}
+            Outlook.NameSpace m_olNamespace = m_olApp.GetNamespace("MAPI");
+            if (Processes.Length != 0) { m_olNamespace = m_olApp.Session; }
+
+
+
+
+            MessageBox.Show(Processes.Length.ToString());
+
+            return RetVal;
         }
     }
 }
