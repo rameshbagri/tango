@@ -33,7 +33,7 @@
     <PublishUrl>C:\Users\ramesh\Desktop\TangoPub\</PublishUrl>
     <InstallUrl />
     <TargetCulture>en</TargetCulture>
-    <ApplicationVersion>1.0.0.600</ApplicationVersion>
+    <ApplicationVersion>1.0.0.604</ApplicationVersion>
     <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
     <UpdateEnabled>true</UpdateEnabled>
     <UpdateInterval>0</UpdateInterval>
@@ -215,6 +215,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Ribbon1.cs" />
     <Compile Include="TangoRibbon.cs">
       <SubType>Component</SubType>
     </Compile>

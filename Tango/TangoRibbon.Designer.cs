@@ -47,7 +47,6 @@
             this.Tango.Groups.Add(this.group1);
             this.Tango.Label = "TabAddIns";
             this.Tango.Name = "Tango";
-            this.Tango.Position = this.Factory.RibbonPosition.AfterOfficeId("");
             this.Tango.Tag = "Tango";
             // 
             // group1
@@ -68,7 +67,6 @@
             // 
             this.Name = "TangoRibbon";
             this.RibbonType = "Microsoft.Word.Document";
-            this.StartFromScratch = true;
             this.Tabs.Add(this.Tango);
             this.Tag = "Tango";
             this.Load += new Microsoft.Office.Tools.Ribbon.RibbonUIEventHandler(this.TangoRibbon_Load);
