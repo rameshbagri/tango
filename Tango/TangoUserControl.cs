@@ -184,7 +184,7 @@ namespace Tango
                     if (setence.Length > findtext[i].ToString().Length)
                     {
                         if (Ctxt.Equals(Ptxt)) { sec++; } else { sec = 1; }
-                        MessageBox.Show("ptxt is : " + Ptxt + Environment.NewLine + "Ctxt is : " + Ctxt + Environment.NewLine + "Count is : " + sec.ToString());
+                        //MessageBox.Show("ptxt is : " + Ptxt + Environment.NewLine + "Ctxt is : " + Ctxt + Environment.NewLine + "Count is : " + sec.ToString());
                         CLB1N.Items.Add(sec);
                         CLB1.Items.Add(Ctxt);
                         Ptxt = Ctxt;
@@ -449,12 +449,13 @@ namespace Tango
                         rng.Find.MatchWildcards = false;
                         rng.Find.MatchSoundsLike = false;
                         rng.Find.MatchAllWordForms = false;
-                        TabCL.FindString(itemChecked.ToString());
                         int indextodel = TabCL.FindString(itemChecked.ToString());
+                        bool cnt = true;
+                        while(cnt)
+                        {if(!TabCL.GetItemChecked(indextodel)){indextodel++;rng.Find.Execute();}else{cnt = false;}}
                         remotem.Add(indextodel);
                         string ReplIndex = "No Value";
                         ReplIndex = TabCLn.Items[indextodel].ToString();
-                        MessageBox.Show(ReplIndex);
 
                         docs.TrackRevisions = true;
                         rng.Find.Execute(Replace: Microsoft.Office.Interop.Word.WdReplace.wdReplaceOne);
