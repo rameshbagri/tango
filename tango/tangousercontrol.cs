@@ -137,6 +137,15 @@ namespace Tango
             TabControl TbCtrl = AddTabCtrl("TabCtrl" + basePage, (int)((double)(P.Height) * 0.42), 0, P.Width, (int)((double)(P.Height) - CLB.Height));
 
             Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
+            Microsoft.Office.Interop.Word.View v = Globals.ThisAddIn.Application.ActiveWindow.View;
+
+            v.RevisionsView = Microsoft.Office.Interop.Word.WdRevisionsView.wdRevisionsViewFinal;
+            v.ShowRevisionsAndComments = true;
+            v.ShowComments = true;
+            v.ShowFormatChanges = true;
+            v.ShowInkAnnotations = true;
+            v.ShowInsertionsAndDeletions = true;
+
             Trev = docs.TrackRevisions;
             docs.TrackRevisions = false;
             Microsoft.Office.Interop.Word.Range rng = docs.Content;
@@ -486,6 +495,16 @@ namespace Tango
                         }
                         //TabCL.Refresh();
                         Globals.ThisAddIn.Application.ScreenUpdating = false;
+
+                        Microsoft.Office.Interop.Word.View v = Globals.ThisAddIn.Application.ActiveWindow.View;
+
+                        v.RevisionsView = Microsoft.Office.Interop.Word.WdRevisionsView.wdRevisionsViewFinal;
+                        v.ShowRevisionsAndComments = true;
+                        v.ShowComments = true;
+                        v.ShowFormatChanges = true;
+                        v.ShowInkAnnotations = true;
+                        v.ShowInsertionsAndDeletions = true;
+
                         rng = docs.Content;
                         rng.Find.ClearFormatting();
                         rng.Start = 0;
