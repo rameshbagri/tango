@@ -34,19 +34,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.tab1 = this.Factory.CreateRibbonTab();
+            this.Tango = this.Factory.CreateRibbonTab();
             this.group1 = this.Factory.CreateRibbonGroup();
             this.toggleButton1 = this.Factory.CreateRibbonToggleButton();
-            this.tab1.SuspendLayout();
+            this.Tango.SuspendLayout();
             this.group1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // tab1
+            // Tango
             // 
-            this.tab1.ControlId.ControlIdType = Microsoft.Office.Tools.Ribbon.RibbonControlIdType.Office;
-            this.tab1.Groups.Add(this.group1);
-            this.tab1.Label = "TabAddIns";
-            this.tab1.Name = "tab1";
+            this.Tango.ControlId.ControlIdType = Microsoft.Office.Tools.Ribbon.RibbonControlIdType.Office;
+            this.Tango.Groups.Add(this.group1);
+            this.Tango.Label = "TabAddIns";
+            this.Tango.Name = "Tango";
+            this.Tango.Position = this.Factory.RibbonPosition.AfterOfficeId("");
+            this.Tango.Tag = "Tango";
             // 
             // group1
             // 
@@ -58,16 +60,20 @@
             // 
             this.toggleButton1.Label = "Execute";
             this.toggleButton1.Name = "toggleButton1";
+            this.toggleButton1.ShowImage = true;
+            this.toggleButton1.ShowLabel = false;
             this.toggleButton1.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.toggleButton1_Click);
             // 
             // TangoRibbon
             // 
             this.Name = "TangoRibbon";
             this.RibbonType = "Microsoft.Word.Document";
-            this.Tabs.Add(this.tab1);
+            this.StartFromScratch = true;
+            this.Tabs.Add(this.Tango);
+            this.Tag = "Tango";
             this.Load += new Microsoft.Office.Tools.Ribbon.RibbonUIEventHandler(this.TangoRibbon_Load);
-            this.tab1.ResumeLayout(false);
-            this.tab1.PerformLayout();
+            this.Tango.ResumeLayout(false);
+            this.Tango.PerformLayout();
             this.group1.ResumeLayout(false);
             this.group1.PerformLayout();
             this.ResumeLayout(false);
@@ -76,7 +82,7 @@
 
         #endregion
 
-        internal Microsoft.Office.Tools.Ribbon.RibbonTab tab1;
+        internal Microsoft.Office.Tools.Ribbon.RibbonTab Tango;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup group1;
         internal Microsoft.Office.Tools.Ribbon.RibbonToggleButton toggleButton1;
     }

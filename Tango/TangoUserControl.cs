@@ -111,7 +111,7 @@ namespace Tango
 
         private string AddSummary1A(string basePage, string addPage, object[] srchItem, object[] ReplItem)
         {
-            bool Trev = false;
+            //bool Trev = false;
             DateTime dt1 = DateTime.Now;
             Globals.ThisAddIn.Application.ScreenUpdating = false;
             string RetVal = "";
@@ -137,8 +137,17 @@ namespace Tango
             TabControl TbCtrl = AddTabCtrl("TabCtrl" + basePage, (int)((double)(P.Height) * 0.42), 0, P.Width, (int)((double)(P.Height) - CLB.Height));
 
             Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
-            Trev = docs.TrackRevisions;
-            docs.TrackRevisions = false;
+            Microsoft.Office.Interop.Word.View v = Globals.ThisAddIn.Application.ActiveWindow.View;
+
+            v.RevisionsView = Microsoft.Office.Interop.Word.WdRevisionsView.wdRevisionsViewFinal;
+            v.ShowRevisionsAndComments = true;
+            v.ShowComments = true;
+            v.ShowFormatChanges = true;
+            v.ShowInkAnnotations = true;
+            v.ShowInsertionsAndDeletions = true;
+
+            //Trev = docs.TrackRevisions;
+            //docs.TrackRevisions = false;
             Microsoft.Office.Interop.Word.Range rng = docs.Content;
             rng.Find.ClearFormatting();
 
@@ -180,7 +189,7 @@ namespace Tango
                     rng.Select();
                     string setence = (Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim());
                     Ctxt = setence;
-                    
+
                     if (setence.Length > findtext[i].ToString().Length)
                     {
                         if (Ctxt.Equals(Ptxt)) { sec++; } else { sec = 1; }
@@ -228,7 +237,7 @@ namespace Tango
             DateTime dt2 = DateTime.Now;
 
             TimeSpan dt = dt2 - dt1;
-            docs.TrackRevisions = Trev;
+            //docs.TrackRevisions = Trev;
             btnExecute.Enabled = false;
             button2.Enabled = true;
 
@@ -390,8 +399,18 @@ namespace Tango
 
                 bool SAll = (TabCL.Items.Count == TabCL.CheckedItems.Count);
                 Microsoft.Office.Interop.Word.Document docs = Globals.ThisAddIn.Application.ActiveDocument;
-                bool Trev = docs.TrackRevisions;
-                docs.TrackRevisions = false;
+
+                Microsoft.Office.Interop.Word.View v = Globals.ThisAddIn.Application.ActiveWindow.View;
+
+                v.RevisionsView = Microsoft.Office.Interop.Word.WdRevisionsView.wdRevisionsViewFinal;
+                v.ShowRevisionsAndComments = true;
+                v.ShowComments = true;
+                v.ShowFormatChanges = true;
+                v.ShowInkAnnotations = true;
+                v.ShowInsertionsAndDeletions = true;
+
+                //bool Trev = docs.TrackRevisions;
+                //docs.TrackRevisions = false;
                 Microsoft.Office.Interop.Word.Range rng = docs.Content;
                 rng.Find.ClearFormatting();
                 string str1 = CLB.Items[Tindex].ToString();
@@ -412,9 +431,9 @@ namespace Tango
                     rng.Find.MatchWildcards = false;
                     rng.Find.MatchSoundsLike = false;
                     rng.Find.MatchAllWordForms = false;
-                    docs.TrackRevisions = true;
+                    //docs.TrackRevisions = true;
                     rng.Find.Execute(Replace: Microsoft.Office.Interop.Word.WdReplace.wdReplaceAll);
-                    docs.TrackRevisions = false;
+                    //docs.TrackRevisions = false;
                     remotemall.Add(pagename);
                     remotemall1.Add(Tindex);
                 }
@@ -451,15 +470,15 @@ namespace Tango
                         rng.Find.MatchAllWordForms = false;
                         int indextodel = TabCL.FindString(itemChecked.ToString());
                         bool cnt = true;
-                        while(cnt)
-                        {if(!TabCL.GetItemChecked(indextodel)){indextodel++;rng.Find.Execute();}else{cnt = false;}}
+                        while (cnt)
+                        { if (!TabCL.GetItemChecked(indextodel)) { indextodel++; rng.Find.Execute(); } else { cnt = false; } }
                         remotem.Add(indextodel);
                         string ReplIndex = "No Value";
                         ReplIndex = TabCLn.Items[indextodel].ToString();
 
-                        docs.TrackRevisions = true;
+                        //docs.TrackRevisions = true;
                         rng.Find.Execute(Replace: Microsoft.Office.Interop.Word.WdReplace.wdReplaceOne);
-                        docs.TrackRevisions = false;
+                        //docs.TrackRevisions = false;
                         int countnum1 = CLB.Items[Tindex].ToString().IndexOf("(", 0);
                         int countnum2 = CLB.Items[Tindex].ToString().IndexOf(")", 0);
 
@@ -476,16 +495,14 @@ namespace Tango
                         rng.Select();
                     }
                     i++;
-                    //remotem.Sort();
-                    //remotem.Reverse();
                     if (remotem.ToList().Count > 0)
                     {
+                        Globals.ThisAddIn.Application.ScreenUpdating = false;
                         for (int it = TabCL.Items.Count - 1; it >= 0; it--)
                         {
                             TabCL.Items.RemoveAt(it);
                         }
-                        //TabCL.Refresh();
-                        Globals.ThisAddIn.Application.ScreenUpdating = false;
+
                         rng = docs.Content;
                         rng.Find.ClearFormatting();
                         rng.Start = 0;
@@ -497,31 +514,19 @@ namespace Tango
                             if (setence.Length > fText.ToString().Length)
                             {
                                 string txt = Globals.ThisAddIn.Application.Selection.Range.Sentences[1].Text.Trim();
-                                string oldtxt = fText.ToString() + rText.ToString();
-                                string newtxt = rText.ToString();
-                                if(txt.Substring(0,oldtxt.Length).Equals(oldtxt))
-                                {
-                                    newtxt = newtxt + txt.Substring(oldtxt.Length);
-                                }else
-                                {
-                                    newtxt = txt;
-                                }
-                                TabCL.Items.Add(newtxt);
+                                TabCL.Items.Add(txt);
                             }
                             rng.Find.Execute(ref fText);
                         }
                         TabCL.Refresh();
-                        remotem.Sort();
-                        remotem.Reverse();
-                        foreach (int x in remotem.ToList())
-                        {
-                            TabCL.Items.RemoveAt(x);
-                        }
+                        rng = docs.Content;
                         rng.Start = 0;
+                        rng.End = 0;
+                        rng.Select();
                         Globals.ThisAddIn.Application.ScreenUpdating = true;
                     }
                 }
-                docs.TrackRevisions = Trev;
+                //docs.TrackRevisions = Trev;
             }
             remotemall.Sort();
             remotemall.Reverse();
@@ -1133,7 +1138,7 @@ namespace Tango
 
         private void CmdRep_Click(object sender, EventArgs e)
         {
-            if(CmdRep.Text.Equals("Report"))
+            if (CmdRep.Text.Equals("Report"))
             {
                 CmdRep.Text = "Hide Report";
                 tabControl1.Visible = false;
@@ -1152,7 +1157,7 @@ namespace Tango
         }
         private void SendMail()
         {
-            string path =  @"C:\Tango\ReportLog" + DateTime.Now.ToString("_yyyy_mm_dd_hh_MM_ss") + ".txt";
+            string path = @"C:\Tango\ReportLog" + DateTime.Now.ToString("_yyyy_mm_dd_hh_MM_ss") + ".txt";
             MessageBox.Show(path);
             MessageBox.Show("success");
             MessageBox.Show(LstEvents.Items.Count.ToString());
@@ -1166,7 +1171,7 @@ namespace Tango
                     //MessageBox.Show(LstEvents.Items[i].ToString());
                 }
             }
-                
+
             //bool x = Is_OutLook_Running();
         }
 
@@ -1178,13 +1183,10 @@ namespace Tango
 
             Process[] Processes = Process.GetProcessesByName("OUTLOOK");
             Outlook.Application m_olApp = new Outlook.Application();
-            if(Processes.Length != 0){ m_olApp = (Outlook.Application)(Marshal.GetActiveObject("Outlook.Application"));}
+            if (Processes.Length != 0) { m_olApp = (Outlook.Application)(Marshal.GetActiveObject("Outlook.Application")); }
             Outlook.NameSpace m_olNamespace = m_olApp.GetNamespace("MAPI");
             if (Processes.Length != 0) { m_olNamespace = m_olApp.Session; }
-
-
-
-
+            
             MessageBox.Show(Processes.Length.ToString());
 
             return RetVal;
